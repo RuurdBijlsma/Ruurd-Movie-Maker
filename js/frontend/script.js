@@ -13,25 +13,29 @@ function initialize() {
     });
 
     seeking = false;
-    let seekBar = document.getElementsByClassName('seek-bar')[0];
+    seekBar = document.getElementsByClassName('seek-bar')[0];
     document.addEventListener('mousemove', e => {
-        if (seeking) {
-            let x = e.pageX - seekBar.offsetLeft;
-            let width = seekBar.offsetWidth;
-
-            x = x < 0 ? 0 : x;
-            x = x > width ? width : x;
-
-            video.currentTime = video.duration * x / width;
-        }
+        if (seeking)
+            applySeekbar(e)
     });
     document.addEventListener('mouseup', () => {
         seeking = false;
     })
 }
 
-function startSeeking() {
+function applySeekbar(e) {
+    let x = e.pageX - seekBar.offsetLeft;
+    let width = seekBar.offsetWidth;
+
+    x = x < 0 ? 0 : x;
+    x = x > width ? width : x;
+
+    video.currentTime = video.duration * x / width;
+}
+
+function startSeeking(e) {
     seeking = true;
+    applySeekbar(e);
 }
 
 function toggleFullscreen() {
