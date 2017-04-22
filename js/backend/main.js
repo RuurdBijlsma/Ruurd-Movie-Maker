@@ -10,7 +10,7 @@ let mainWindow;
 
 function createWindow() {
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize
-    mainWindow = new BrowserWindow({width: width+20, height: height+20});
+    mainWindow = new BrowserWindow({width: width + 20, height: height + 20});
 
     let indexUrl = path.join(__dirname, '../frontend/index.html');
     mainWindow.loadURL(url.format({
@@ -44,3 +44,5 @@ app.on('activate', function () {
 });
 
 require('./ffmpeg.js');
+
+exports.setFullScreen = flag => mainWindow.setFullscreen(flag);
