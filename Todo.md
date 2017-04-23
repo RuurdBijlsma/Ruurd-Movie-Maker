@@ -1,14 +1,14 @@
 #Todo
-* Seeking via thumbnails in rechter paneel
-* Lijn om current time aan te geven in thumbnails in rechter paneel
+* Seeking zit error in als playbackspeed veranderd is
 * App icoon veranderen
 * Import video via "Open with", slepen naar app, en button
 * Export video
 * Edit video volume
-* Cut video
-* Set playback speed
 * Export to youtube als er tijd over is
 #Done
+* Lijn om current time aan te geven in thumbnails in rechter paneel
+* Set playback speed
+* Cut video
 * Ui zoals movie maker
 * Video Player
 * Video class maken die alle video bestanden bijhoud waar aan gewerkt wordt
