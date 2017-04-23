@@ -4,6 +4,7 @@ const runFFMPEGCommand = remote.require("./ffmpeg.js").runFFMPEGCommand;
 document.addEventListener("DOMContentLoaded", initialize);
 function initialize() {
     video = new Video({
+        videoPlayer: document.getElementsByClassName('video-player')[0],
         videoContainer: document.getElementsByClassName('video-container')[0],
         thumbnailContainer: document.getElementsByClassName('thumbnails')[0],
         seekProgress: document.getElementsByClassName('seek-progress')[0],
@@ -30,7 +31,8 @@ function applySeekbar(e) {
     x = x < 0 ? 0 : x;
     x = x > width ? width : x;
 
-    video.currentTime = video.duration * x / width;
+    let calculatedTime = video.duration * x / width;
+    video.currentTime = calculatedTime;
 }
 
 function startSeeking(e) {

@@ -6,27 +6,7 @@ class VideoFragment {
         this.element = document.createElement("video");
         this.element.src = file.path;
         this.element.load();
-
-        this.widthPerSecond = 3;
-
-        this.startTime = 0;
-        this.endTime = 0;
         // this._playbackSpeed = 1;
-
-        this.metadataLoaded = false;
-        this.element.onloadedmetadata = () => {
-            this.metadataLoaded = true;
-            this.endTime = this.duration;
-
-            this.executeEvent("loadedMetadata");
-        };
-        this.element.onloadeddata = () => this.updateThumbnail().then(url => {
-            this.executeEvent("thumbnail");
-            this.thumbnailElement.style.width = this.thumbnailWidth + "px";
-            this.thumbnailElement.style.backgroundImage = `url('${this.thumbnail}')`;
-
-            this.executeEvent("loadedData");
-        });
 
         this.thumbnailElement = document.createElement("div");
         this.thumbnailElement.setAttribute("class", "thumbnail");
@@ -37,15 +17,90 @@ class VideoFragment {
         innerSeeker.setAttribute("class", "thumbnail-inner-seeker");
         this.thumbnailSeeker.appendChild(innerSeeker);
 
-        this._active = false;
+        this.metadataLoaded = false;
+        this.element.onloadedmetadata = () => {
+            this.metadataLoaded = true;
+
+            this.executeEvent("loadedMetadata");
+        };
+        this.element.onloadeddata = () => this.updateThumbnail().then(url => {
+            this.executeEvent("thumbnail");
+            this.widthPerSecond = 3;
+            this.thumbnailElement.style.backgroundImage = `url('${this.thumbnail}')`;
+
+            this.executeEvent("loadedData");
+        });
+
+        this.active = false;
+        this.startTime = 0;
+        this.endTime = 1;
+        this.playbackSpeed = 1;
 
         this.updateFps();
     }
 
+    get thumbnailWidth() {
+        return Math.round(this.duration * this.widthPerSecond);
+    }
+
+    updateThumbnailWidth() {
+        this.thumbnailElement.style.width = this.thumbnailWidth + "px";
+        this.executeEvent("timeChange");
+    }
+
+    get playbackSpeed() {
+        return this._playbackSpeed;
+    }
+
+    set playbackSpeed(value) {
+        this._playbackSpeed = value;
+        this.element.playbackRate = value;
+        this.updateThumbnailWidth();
+    }
+
+    get startTime() {
+        return this._startTime;
+    }
+
+    set startTime(value) {
+        if (value < 0) {
+            console.warn("startTime can't be lower than 0");
+            return;
+        }
+
+        this._startTime = value;
+        this.updateThumbnail(80, value).then(url => {
+            this.thumbnailElement.style.backgroundImage = `url('${this.thumbnail}')`;
+        });
+        this.updateThumbnailWidth();
+    }
+
+    get endTime() {
+        return this._endTime;
+    }
+
+    set endTime(value) {
+        if (value > 1) {
+            console.warn("endTime can't be higher than the video duration");
+            return;
+        }
+
+        this._endTime = value;
+        this.updateThumbnailWidth();
+    }
+
+    get widthPerSecond() {
+        return this._widthPerSecond;
+    }
+
+    set widthPerSecond(value) {
+        this._widthPerSecond = value;
+        this.updateThumbnailWidth();
+    }
 
     play(from) {
-        if (from) {
-            this.element.currentTime = from;
+        if (from !== undefined) {
+            this.currentTime = from;
         }
         if (this.element.paused)
             this.element.play();
@@ -56,14 +111,31 @@ class VideoFragment {
     }
 
     get currentTime() {
-        return this.element.currentTime;
+        let calculatedValue = this.element.currentTime - this.startTime * this.element.duration;
+        calculatedValue /= this.playbackSpeed;
+
+        // console.log('getting currentTime:', calculatedValue, "based on:", {
+        //     elementDuration: this.element.duration,
+        //     elementTime: this.element.currentTime,
+        //     fragmentStartTime: this.startTime,
+        //     fragmentPlaybackSpeed: this.playbackSpeed,
+        // });
+
+        return calculatedValue;
     }
 
     set currentTime(value) {
-        this.element.currentTime = value;
+        let calculatedValue = this.startTime * this.element.duration + value;
 
-        let percentage = value / this.duration * 100;
-        this.thumbnailSeeker.style.left = `calc(${percentage}% - 2px)`;
+        // console.debug('setting element time:', calculatedValue, "based on:", {
+        //     elementDuration: this.element.duration,
+        //     fragmentStartTime: this.startTime,
+        //     setValue: value,
+        //     fragmentPlaybackSpeed: this.playbackSpeed,
+        // });
+
+        if (!isNaN(calculatedValue))
+            this.element.currentTime = calculatedValue;
     }
 
     set active(value) {
@@ -74,22 +146,13 @@ class VideoFragment {
         } else {
             this.element.style.zIndex = 0;
             this.thumbnailElement.removeAttribute("active");
+            this.currentTime = 0;
         }
     }
 
     get active() {
         return this._active;
     }
-
-    // get playbackSpeed() {
-    //     return this._playbackSpeed;
-    // }
-    //
-    // set playbackSpeed(value) {
-    //     this._playbackSpeed = value;
-    //     this.element.playbackRate = value;
-    //     this.executeEvent("widthChange");
-    // }
 
     addEventListener(name, action) {
         if (!this.eventListeners[name])
@@ -114,14 +177,10 @@ class VideoFragment {
 
     get duration() {
         if (this.metadataLoaded) {
-            return this.element.duration;
+            return (this.endTime - this.startTime) * (this.element.duration / this.playbackSpeed);
         }
         console.warn("Video metadata hasn't loaded yet");
         return 0;
-    }
-
-    get thumbnailWidth() {
-        return Math.round(this.duration * this.widthPerSecond);
     }
 
     updateFps() {
@@ -132,13 +191,13 @@ class VideoFragment {
         });
     }
 
-    updateThumbnail(height = 80, timestamp = 0) {
+    updateThumbnail(height = 80, timePercentage = 0) {
         return new Promise(resolve => {
             let canvas = document.createElement('canvas');
             let context = canvas.getContext('2d');
 
-            timestamp = this.element.duration * timestamp;
-            this.element.currentTime = timestamp;
+            if (!isNaN(this.element.duration))
+                this.element.currentTime = timePercentage * this.element.duration;
 
             this.element.oncanplaythrough = e => {
                 context.width = height / this.element.videoHeight * this.element.videoWidth;
