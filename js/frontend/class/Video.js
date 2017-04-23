@@ -7,6 +7,10 @@ class Video {
         this.seekThumb = seekThumb;
         this.timeStamp = timeStamp;
         this.playButton = playButton;
+
+        document.addEventListener('mousemove', e => this.onMouseMove(e));
+        document.addEventListener('mouseup', () => this.seeking = false);
+        this.seeking = false;
     }
 
     nextFrame() {
@@ -97,6 +101,13 @@ class Video {
 
         for (let file of files) {
             let fragment = new VideoFragment(file);
+
+            fragment.thumbnailSeeker.addEventListener('mousedown', e => {
+                this.seeking = true;
+                this.onMouseMove(e);
+            });
+            fragment.thumbnailElement.addEventListener('mouseenter', () => this.hoveringFragment = fragment);
+
             this.videoContainer.appendChild(fragment.element);
             this.thumbnailContainer.appendChild(fragment.thumbnailElement);
             this.fragments.push(fragment);
@@ -112,10 +123,30 @@ class Video {
         }
     }
 
+    onMouseMove(e) {
+        if (this.seeking && this.hoveringFragment) {
+            let offset = this.hoveringFragment.thumbnailElement.getBoundingClientRect();
+            let x = e.pageX - offset.left;
+            let width = this.hoveringFragment.thumbnailElement.offsetWidth;
+
+            x = x < 0 ? 0 : x;
+            x = x > width ? width : x;
+
+            let startTime = 0;
+            for (let fragment of this.fragments) {
+                if (fragment === this.hoveringFragment) {
+                    break;
+                }
+                startTime += fragment.duration;
+            }
+            this.currentTime = startTime + this.hoveringFragment.duration * x / width;
+        }
+    }
 
     set currentTime(value) {
         if (value >= 0 && value <= this.duration) {
             this.updateTime(value);
+            let prevFragment = this.activeFragment;
 
             for (let fragment of this.fragments) {
                 if (value < fragment.duration) {
@@ -126,11 +157,15 @@ class Video {
                     value -= fragment.duration;
                 }
             }
-            for (let fragment of this.fragments) {
-                fragment.pause();
+
+            if (this.activeFragment !== prevFragment) {
+                for (let fragment of this.fragments) {
+                    if (this.activeFragment === fragment && this.playing)
+                        fragment.play();
+                    else
+                        fragment.pause();
+                }
             }
-            if (this.playing)
-                this.activeFragment.play();
         }
     }
 
@@ -145,13 +180,10 @@ class Video {
     }
 
     set activeFragment(value) {
+        if (this._activeFragment !== undefined)
+            this._activeFragment.active = false;
+        value.active = true;
         this._activeFragment = value;
-        for (let fragment of this.fragments) {
-            if (fragment === value)
-                fragment.element.style.zIndex = 1;
-            else
-                fragment.element.style.zIndex = 0;
-        }
     }
 
     get activeFragment() {

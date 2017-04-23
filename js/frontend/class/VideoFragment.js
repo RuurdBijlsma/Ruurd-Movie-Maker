@@ -30,15 +30,25 @@ class VideoFragment {
 
         this.thumbnailElement = document.createElement("div");
         this.thumbnailElement.setAttribute("class", "thumbnail");
+        this.thumbnailSeeker = document.createElement('div');
+        this.thumbnailSeeker.setAttribute("class", "thumbnail-seeker");
+        this.thumbnailElement.appendChild(this.thumbnailSeeker);
+        let innerSeeker = document.createElement('div');
+        innerSeeker.setAttribute("class", "thumbnail-inner-seeker");
+        this.thumbnailSeeker.appendChild(innerSeeker);
+
+        this._active = false;
 
         this.updateFps();
     }
+
 
     play(from) {
         if (from) {
             this.element.currentTime = from;
         }
-        this.element.play();
+        if (this.element.paused)
+            this.element.play();
     }
 
     pause() {
@@ -51,6 +61,24 @@ class VideoFragment {
 
     set currentTime(value) {
         this.element.currentTime = value;
+
+        let percentage = value / this.duration * 100;
+        this.thumbnailSeeker.style.left = `calc(${percentage}% - 2px)`;
+    }
+
+    set active(value) {
+        this._active = value;
+        if (value) {
+            this.element.style.zIndex = 1;
+            this.thumbnailElement.setAttribute("active", "");
+        } else {
+            this.element.style.zIndex = 0;
+            this.thumbnailElement.removeAttribute("active");
+        }
+    }
+
+    get active() {
+        return this._active;
     }
 
     // get playbackSpeed() {
