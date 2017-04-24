@@ -14,6 +14,7 @@ function initialize() {
     });
 
     seeking = false;
+
     seekBar = document.getElementsByClassName('seek-bar')[0];
     document.addEventListener('mousemove', e => {
         if (seeking)
@@ -51,13 +52,14 @@ function applySeekbar(e) {
     x = x < 0 ? 0 : x;
     x = x > width ? width : x;
 
-    let calculatedTime = video.duration * x / width;
-    video.currentTime = calculatedTime;
+    video.currentTime = video.duration * x / width;
 }
 
 function startSeeking(e) {
-    seeking = true;
-    applySeekbar(e);
+    if (e.button === 0) {
+        seeking = true;
+        applySeekbar(e);
+    }
 }
 
 function toggleFullscreen() {

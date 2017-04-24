@@ -1,5 +1,5 @@
 #Todo
-* Seeking zit error in als playbackspeed veranderd is
+* Playbackspeed en end time over kopieren naar fragment dat gecreert is in split
 * App icoon veranderen
 * Import video via "Open with", slepen naar app, en button
 * Export video

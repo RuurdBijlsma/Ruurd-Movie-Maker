@@ -10,8 +10,12 @@ class Video {
         this.playButton = playButton;
 
         document.addEventListener('mousemove', e => this.onMouseMove(e));
-        document.addEventListener('mouseup', () => this.seeking = false);
+        document.addEventListener('mouseup', () => {
+            this.seeking = false;
+        });
         this.seeking = false;
+
+        this.createContextMenu();
     }
 
     nextFrame() {
@@ -122,10 +126,41 @@ class Video {
         }
     }
 
+    createContextMenu() {
+        require('electron-context-menu')({
+            prepend: (params, browserWindow) => [{
+                label: "Set start point",
+                click: () => {
+                    this.activeFragment.startPoint = this.activeFragment.currentPoint;
+                }
+            }, {
+                label: "Set end point",
+                click: () => {
+                    this.activeFragment.endPoint = this.activeFragment.currentPoint;
+                }
+            }, {
+                label: "Split video",
+                click: () => {
+                    this.split(this.activeFragment, this.activeFragment.currentPoint);
+                }
+            }],
+            shouldShowMenu: (e, params) => {
+                let value = this.shouldShowContextMenu;
+                this.shouldShowContextMenu = false;
+                return value;
+            },
+            showInspectElement: false
+        });
+    }
+
     addFragment(fragment, index) {
         fragment.thumbnailSeeker.addEventListener('mousedown', e => {
-            this.seeking = true;
-            this.onMouseMove(e);
+            if (e.button === 2) {
+                this.shouldShowContextMenu = true;
+            } else if (e.button === 0) {
+                this.seeking = true;
+                this.onMouseMove(e);
+            }
         });
         fragment.thumbnailElement.addEventListener('mouseenter', () => this.hoveringFragment = fragment);
 
@@ -223,11 +258,15 @@ class Video {
 
     split(fragment, timePercent = 0.5) {
         let index = this.fragments.indexOf(fragment);
+
         let newFragment = new VideoFragment(fragment.file);
+        newFragment.playbackSpeed = fragment.playbackSpeed;
+        newFragment.endPoint = fragment.endPoint;
+
         this.addFragment(newFragment, index);
 
-        newFragment.startTime = timePercent;
-        fragment.endTime = timePercent;
+        newFragment.startPoint = timePercent;
+        fragment.endPoint = timePercent;
     }
 
     onMouseMove(e) {

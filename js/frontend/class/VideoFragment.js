@@ -26,12 +26,12 @@ class VideoFragment {
         this.element.onloadeddata = () => {
             this.executeEvent("loadedData");
             this.widthPerSecond = 3;
-            this.updateThumbnail(this.startTime);
+            this.updateThumbnail(this.startPoint);
         };
 
         this.active = false;
-        this.startTime = 0;
-        this.endTime = 1;
+        this.startPoint = 0;
+        this.endPoint = 1;
         this.playbackSpeed = 1;
 
         this.updateFps();
@@ -56,13 +56,13 @@ class VideoFragment {
         this.updateThumbnailWidth();
     }
 
-    get startTime() {
+    get startPoint() {
         return this._startTime;
     }
 
-    set startTime(value) {
+    set startPoint(value) {
         if (value < 0) {
-            console.warn("startTime can't be lower than 0");
+            console.warn("startPoint can't be lower than 0");
             return;
         }
 
@@ -70,13 +70,13 @@ class VideoFragment {
         this.updateThumbnailWidth();
     }
 
-    get endTime() {
+    get endPoint() {
         return this._endTime;
     }
 
-    set endTime(value) {
+    set endPoint(value) {
         if (value > 1) {
-            console.warn("endTime can't be higher than the video duration");
+            console.warn("endPoint can't be higher than the video duration");
             return;
         }
 
@@ -110,13 +110,13 @@ class VideoFragment {
     }
 
     get currentTime() {
-        let point = this.durationWithoutEndTime * (this.startTime * this.element.duration - this.element.currentTime);
-        point /= (this.startTime - 1) * this.element.duration;
+        let point = this.durationWithoutEndTime * (this.startPoint * this.element.duration - this.element.currentTime);
+        point /= (this.startPoint - 1) * this.element.duration;
 
         // console.log('getting currentTime:', point, "based on:", {
         //     elementDuration: this.element.duration,
         //     elementTime: this.element.currentTime,
-        //     fragmentStartTime: this.startTime,
+        //     fragmentStartTime: this.startPoint,
         //     fragmentDurationWithoutStartTime: this.durationWithoutEndTime,
         // });
 
@@ -124,20 +124,28 @@ class VideoFragment {
     }
 
     set currentTime(value) {
-        let point = this.startTime + (value / this.durationWithoutEndTime) * (1 - this.startTime);
+        let point = this.timeToPoint(value);
         point *= this.element.duration;
 
         // console.info('setting element time:', point, "based on:", {
-        //     percentagePoint: this.startTime + value / this.durationWithoutEndTime,
+        //     percentagePoint: this.startPoint + value / this.durationWithoutEndTime,
         //     elementDuration: this.element.duration,
         //     fragmentDurationWithoutEndTime: this.durationWithoutEndTime,
         //     valueDividedByDurationWithoutEndTime: value / this.durationWithoutEndTime,
         //     setValue: value,
-        //     fragmentStartTime: this.startTime,
+        //     fragmentStartTime: this.startPoint,
         // });
 
         if (!isNaN(point))
             this.element.currentTime = point;
+    }
+
+    timeToPoint(time) {
+        return this.startPoint + (time / this.durationWithoutEndTime) * (1 - this.startPoint);
+    }
+
+    get currentPoint() {
+        return this.timeToPoint(this.currentTime);
     }
 
     set active(value) {
@@ -181,7 +189,7 @@ class VideoFragment {
 
     get duration() {
         if (this.metadataLoaded) {
-            return (this.endTime - this.startTime) * (this.element.duration / this.playbackSpeed);
+            return (this.endPoint - this.startPoint) * (this.element.duration / this.playbackSpeed);
         }
         console.warn("Video metadata hasn't loaded yet");
         return 0;
@@ -189,7 +197,7 @@ class VideoFragment {
 
     get durationWithoutEndTime() {
         if (this.metadataLoaded) {
-            return (1 - this.startTime) * (this.element.duration / this.playbackSpeed);
+            return (1 - this.startPoint) * (this.element.duration / this.playbackSpeed);
         }
         console.warn("Video metadata hasn't loaded yet");
         return 0;
@@ -208,7 +216,6 @@ class VideoFragment {
     }
 
     updateThumbnail(timePercentage = 0) {
-        console.log('1', timePercentage);
         this.getThumbnail(80, timePercentage).then(url => {
             this.executeEvent("thumbnail");
             this.thumbnailElement.style.backgroundImage = `url('${this.thumbnail}')`;
@@ -216,7 +223,6 @@ class VideoFragment {
     }
 
     getThumbnail(height = 80, timePercentage = 0) {
-        console.log('2', timePercentage);
         return new Promise(resolve => {
             let canvas = document.createElement('canvas');
             let context = canvas.getContext('2d');
