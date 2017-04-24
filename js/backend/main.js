@@ -8,7 +8,20 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+function exportWindowsInstaller() {
+    const electronInstaller = require('electron-winstaller');
+    resultPromise = electronInstaller.createWindowsInstaller({
+        appDirectory: 'C:\\Users\\ruurd\\Documents\\VideoEditor\\node_modules\\electron\\dist',
+        authors: 'Ruurd Bijlsma',
+        exe: 'Video-editor.exe'
+    });
+
+    resultPromise.then(() => console.log("It worked!"), (e) => console.log(`No dice: ${e.message}`));
+}
+
 function createWindow() {
+    // exportWindowsInstaller();
+
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({width: width + 20, height: height + 20});
 
