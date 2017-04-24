@@ -111,8 +111,11 @@ class VideoFragment {
     }
 
     get currentTime() {
-        let calculatedValue = this.element.currentTime - this.startTime * this.element.duration;
-        calculatedValue /= this.playbackSpeed;
+        let point = this.element.currentTime / this.element.duration;
+        point *= this.durationWithoutEndTime;
+
+        // let calculatedValue = this.element.currentTime - this.startTime * this.element.duration;
+        // calculatedValue /= this.playbackSpeed;
 
         // console.log('getting currentTime:', calculatedValue, "based on:", {
         //     elementDuration: this.element.duration,
@@ -121,12 +124,15 @@ class VideoFragment {
         //     fragmentPlaybackSpeed: this.playbackSpeed,
         // });
 
-        return calculatedValue;
+        return point;
     }
 
     set currentTime(value) {
-        let calculatedValue = this.startTime * this.element.duration + value;
+        let point = value / this.durationWithoutEndTime;
+        point *= this.element.duration;
 
+        // let calculatedValue = this.startTime * this.element.duration * this.playbackSpeed + value;
+        //
         // console.debug('setting element time:', calculatedValue, "based on:", {
         //     elementDuration: this.element.duration,
         //     fragmentStartTime: this.startTime,
@@ -134,8 +140,8 @@ class VideoFragment {
         //     fragmentPlaybackSpeed: this.playbackSpeed,
         // });
 
-        if (!isNaN(calculatedValue))
-            this.element.currentTime = calculatedValue;
+        if (!isNaN(point))
+            this.element.currentTime = point;
     }
 
     set active(value) {
@@ -178,6 +184,14 @@ class VideoFragment {
     get duration() {
         if (this.metadataLoaded) {
             return (this.endTime - this.startTime) * (this.element.duration / this.playbackSpeed);
+        }
+        console.warn("Video metadata hasn't loaded yet");
+        return 0;
+    }
+
+    get durationWithoutEndTime() {
+        if (this.metadataLoaded) {
+            return (1 - this.startTime) * (this.element.duration / this.playbackSpeed);
         }
         console.warn("Video metadata hasn't loaded yet");
         return 0;
