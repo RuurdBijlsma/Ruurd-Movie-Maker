@@ -70,7 +70,7 @@ class Video {
         this.seekThumb.style.left = `calc(${percentage}% - 7px)`;
         this.seekProgress.style.width = percentage + '%';
 
-        this.timeStamp.innerText = this.secondsToHms(value) + ' / ' + this.secondsToHms(duration);
+        this.timeStamp.innerText = Video.secondsToHms(value) + ' / ' + Video.secondsToHms(duration);
 
         if (this.activeFragment) {
             let thumbPercentage = this.activeFragment.currentTime / this.activeFragment.duration * 100;
@@ -78,7 +78,7 @@ class Video {
         }
     }
 
-    secondsToHms(seconds) {
+    static secondsToHms(seconds) {
         let stamp = new Date();
         stamp.setTime(seconds * 1000);
 
@@ -130,7 +130,15 @@ class Video {
         fragment.thumbnailElement.addEventListener('mouseenter', () => this.hoveringFragment = fragment);
 
         fragment.thumbnailElement.addEventListener('mouseup', () => {
-            this.activeFragment = fragment;
+            if (!seeking) {
+                if (fragment !== this.activeFragment) {
+                    this.activeFragment.currentTime = 0;
+                    this.activeFragment = fragment;
+                    this.pause();
+                    this.updateTime();
+                    fragment.pause();
+                }
+            }
         });
 
         fragment.addEventListener('loadedMetadata', () => {
@@ -196,7 +204,7 @@ class Video {
         }
     }
 
-    insertNodeAt(parent, newChild, desiredIndex) {
+    static insertNodeAt(parent, newChild, desiredIndex) {
         let children = parent.children;
         if (desiredIndex === children.length) {
             parent.appendChild(newChild);
@@ -207,8 +215,8 @@ class Video {
 
     moveFragment(fragment, index) {
         this.removeFragment(fragment);
-        this.insertNodeAt(this.thumbnailContainer, fragment.thumbnailElement, index);
-        this.insertNodeAt(this.videoContainer, fragment.element, index);
+        Video.insertNodeAt(this.thumbnailContainer, fragment.thumbnailElement, index);
+        Video.insertNodeAt(this.videoContainer, fragment.element, index);
         this.fragments.splice(index, 0, fragment);
         this.updateTime();
     }
@@ -286,6 +294,7 @@ class Video {
                 this._activeFragment.active = false;
             value.active = true;
         }
+
         this._activeFragment = value;
     }
 

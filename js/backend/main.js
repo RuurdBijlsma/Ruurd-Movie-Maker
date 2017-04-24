@@ -9,7 +9,7 @@ const url = require('url');
 let mainWindow;
 
 function createWindow() {
-    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize
+    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({width: width + 20, height: height + 20});
 
     let indexUrl = path.join(__dirname, '../frontend/index.html');

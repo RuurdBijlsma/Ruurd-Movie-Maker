@@ -21,7 +21,27 @@ function initialize() {
     });
     document.addEventListener('mouseup', () => {
         seeking = false;
-    })
+    });
+    document.addEventListener('keydown', e => {
+        console.log(e.key);
+        switch (e.key) {
+            case "Escape":
+                exitFullscreen();
+                break;
+            case "F11":
+                toggleFullscreen();
+                break;
+            case " ":
+                playPause();
+                break;
+            case "ArrowRight":
+                nextFrame();
+                break;
+            case "ArrowLeft":
+                previousFrame();
+                break;
+        }
+    });
 }
 
 function applySeekbar(e) {

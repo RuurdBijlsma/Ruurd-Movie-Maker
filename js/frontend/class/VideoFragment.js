@@ -23,13 +23,11 @@ class VideoFragment {
 
             this.executeEvent("loadedMetadata");
         };
-        this.element.onloadeddata = () => this.updateThumbnail().then(url => {
-            this.executeEvent("thumbnail");
-            this.widthPerSecond = 3;
-            this.thumbnailElement.style.backgroundImage = `url('${this.thumbnail}')`;
-
+        this.element.onloadeddata = () => {
             this.executeEvent("loadedData");
-        });
+            this.widthPerSecond = 3;
+            this.updateThumbnail(this.startTime);
+        };
 
         this.active = false;
         this.startTime = 0;
@@ -69,9 +67,6 @@ class VideoFragment {
         }
 
         this._startTime = value;
-        this.updateThumbnail(80, value).then(url => {
-            this.thumbnailElement.style.backgroundImage = `url('${this.thumbnail}')`;
-        });
         this.updateThumbnailWidth();
     }
 
@@ -115,33 +110,30 @@ class VideoFragment {
     }
 
     get currentTime() {
-        let point = this.element.currentTime / this.element.duration;
-        point *= this.durationWithoutEndTime;
+        let point = this.durationWithoutEndTime * (this.startTime * this.element.duration - this.element.currentTime);
+        point /= (this.startTime - 1) * this.element.duration;
 
-        // let calculatedValue = this.element.currentTime - this.startTime * this.element.duration;
-        // calculatedValue /= this.playbackSpeed;
-
-        // console.log('getting currentTime:', calculatedValue, "based on:", {
+        // console.log('getting currentTime:', point, "based on:", {
         //     elementDuration: this.element.duration,
         //     elementTime: this.element.currentTime,
         //     fragmentStartTime: this.startTime,
-        //     fragmentPlaybackSpeed: this.playbackSpeed,
+        //     fragmentDurationWithoutStartTime: this.durationWithoutEndTime,
         // });
 
         return point;
     }
 
     set currentTime(value) {
-        let point = value / this.durationWithoutEndTime;
+        let point = this.startTime + (value / this.durationWithoutEndTime) * (1 - this.startTime);
         point *= this.element.duration;
 
-        // let calculatedValue = this.startTime * this.element.duration * this.playbackSpeed + value;
-        //
-        // console.debug('setting element time:', calculatedValue, "based on:", {
+        // console.info('setting element time:', point, "based on:", {
+        //     percentagePoint: this.startTime + value / this.durationWithoutEndTime,
         //     elementDuration: this.element.duration,
-        //     fragmentStartTime: this.startTime,
+        //     fragmentDurationWithoutEndTime: this.durationWithoutEndTime,
+        //     valueDividedByDurationWithoutEndTime: value / this.durationWithoutEndTime,
         //     setValue: value,
-        //     fragmentPlaybackSpeed: this.playbackSpeed,
+        //     fragmentStartTime: this.startTime,
         // });
 
         if (!isNaN(point))
@@ -153,10 +145,12 @@ class VideoFragment {
         if (value) {
             this.element.style.zIndex = 1;
             this.thumbnailElement.setAttribute("active", "");
+            this.executeEvent("timeChange");
         } else {
             this.element.style.zIndex = 0;
             this.thumbnailElement.removeAttribute("active");
             this.currentTime = 0;
+            this.pause();
         }
     }
 
@@ -201,15 +195,28 @@ class VideoFragment {
         return 0;
     }
 
+    get fps() {
+        return this._fps * this.playbackSpeed;
+    }
+
     updateFps() {
         runFFMPEGCommand(['-i', this.file.path]).then(info => {
             let words = info.in.split('\n').find(line => line.includes(' fps')).split(' fps')[0].split(' ');
-            this.fps = Number(words[words.length - 1]);
+            this._fps = Number(words[words.length - 1]);
             this.executeEvent("loadedFps");
         });
     }
 
-    updateThumbnail(height = 80, timePercentage = 0) {
+    updateThumbnail(timePercentage = 0) {
+        console.log('1', timePercentage);
+        this.getThumbnail(80, timePercentage).then(url => {
+            this.executeEvent("thumbnail");
+            this.thumbnailElement.style.backgroundImage = `url('${this.thumbnail}')`;
+        });
+    }
+
+    getThumbnail(height = 80, timePercentage = 0) {
+        console.log('2', timePercentage);
         return new Promise(resolve => {
             let canvas = document.createElement('canvas');
             let context = canvas.getContext('2d');
@@ -217,7 +224,8 @@ class VideoFragment {
             if (!isNaN(this.element.duration))
                 this.element.currentTime = timePercentage * this.element.duration;
 
-            this.element.oncanplaythrough = e => {
+            this.element.oncanplaythrough = () => {
+
                 context.width = height / this.element.videoHeight * this.element.videoWidth;
                 context.height = height;
                 canvas.setAttribute("width", context.width);
