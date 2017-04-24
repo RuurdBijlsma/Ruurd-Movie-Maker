@@ -129,6 +129,10 @@ class Video {
         });
         fragment.thumbnailElement.addEventListener('mouseenter', () => this.hoveringFragment = fragment);
 
+        fragment.thumbnailElement.addEventListener('mouseup', () => {
+            this.activeFragment = fragment;
+        });
+
         fragment.addEventListener('loadedMetadata', () => {
             if (++this.loaded === this.toLoad) {
                 if (!this.activeFragment) {

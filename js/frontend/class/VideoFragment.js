@@ -86,6 +86,10 @@ class VideoFragment {
         }
 
         this._endTime = value;
+
+        if (this.currentTime > this.duration)
+            this.currentTime = this.duration;
+
         this.updateThumbnailWidth();
     }
 
