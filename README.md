@@ -1,6 +1,7 @@
 # Video-Editor
 Video editor created with Electron
-###Features
+
+**Features**
 * Cut video
     * Set start point
     * Set end point
@@ -8,7 +9,10 @@ Video editor created with Electron
 * Change video volume
 * Change playback speed
 * Concatenate videos
-###Screenshot
+
+**Screenshot**
 ![Screenshot of the current version](screenshots/main.png?raw=true "Pre Alpha Screenshot")
-###Todo
+
+**Todo**
+
 See [Todo.md](Todo.md)
