@@ -11,6 +11,11 @@ function initialize() {
         seekThumb: document.getElementsByClassName('seek-thumb')[0],
         timeStamp: document.getElementsByClassName('time-stamp')[0],
         playButton: document.getElementsByClassName('play-button')[0],
+        frameRateElement: document.getElementsByClassName('frame-rate')[0],
+        durationElement: document.getElementsByClassName('duration')[0],
+        fragmentControls: document.getElementsByClassName('fragment-controls')[0],
+        speedElement: document.getElementsByClassName('playback-speed')[0],
+        volumeElement: document.getElementsByClassName('volume')[0],
     });
 
     seeking = false;
@@ -41,8 +46,28 @@ function initialize() {
             case "ArrowLeft":
                 previousFrame();
                 break;
+            case "Delete":
+                deleteFragment();
+                break;
         }
     });
+
+    document.addEventListener('dragover', e => e.preventDefault(), false);
+    document.addEventListener('drop', handleDrop, false);
+}
+
+function deleteFragment() {
+    video.removeFragment(video.activeFragment);
+}
+
+function setSpeed(e) {
+    let value = e.target.value;
+    video.activeFragment.playbackSpeed = value;
+}
+
+function setVolume(e) {
+    let value = e.target.value;
+    video.activeFragment.volume = value / 100;
 }
 
 function applySeekbar(e) {
@@ -119,6 +144,11 @@ function playPause() {
     else {
         video.play();
     }
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    video.addFragments(e.dataTransfer.files);
 }
 
 function addVideo(e) {

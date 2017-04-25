@@ -21,6 +21,7 @@ body {
     background: linear-gradient(to bottom, #323333 0%, #444444 100%);
     color: white;
     padding: 10px;
+    height: 82px;
 }
 
 .menu-button {
@@ -31,10 +32,19 @@ body {
     width: 65px;
     height: 65px;
     transition: 0.1s;
+    float: left;
 }
 
 .menu-button input {
     display: none;
+}
+
+.range-field {
+    display: inline-block;
+}
+
+.range-field > input[type=range] {
+    border: 8px solid transparent;
 }
 
 .menu-button > p, .menu-button > i {
@@ -47,37 +57,43 @@ body {
     background-color: rgba(255, 255, 255, 0.15);
 }
 
+.fragment-controls {
+    float: left;
+    width: 400px;
+    left: calc(50% - 275px);
+    margin-left: 10px;
+    height: 100%;
+    position: relative;
+    text-align: center;
+    display: none;
+}
+
+.fragment-controls > div {
+    display: inline-block;
+    margin: 9px;
+}
+
+.fragment-controls > div > p {
+    text-align: center;
+    color: rgb(194, 192, 194);
+}
+
 .menu > .right-aligned {
     float: right;
     margin-left: 10px;
-}
-
-.menu > .center-align {
-    text-align: center;
-    position: relative;
-    cursor: text;
-    width: 200px;
-    margin: auto;
-    display: block;
-    margin-top: -45px;
-    bottom: 8px;
-}
-
-.menu > .center-align:hover, .menu > .center-align:active, .menu > .center-align:focus {
-    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /*Bottom half*/
 .bottom-half {
     position: fixed;
     top: 86px;
-    height: calc(100% - 86px);
+    height: calc(100% - 86px - 22px);
     width: 100%;
 }
 
 .vertical-divider {
     width: 2px;
-    height: calc(100% - 40px - 86px);
+    height: calc(100% - 40px - 86px - 22px);
     background-color: rgba(255, 255, 255, 0.08);
     position: fixed;
     left: calc(50% - 10px);
@@ -246,6 +262,29 @@ video {
 
 .thumbnail[active] > .thumbnail-seeker {
     display: block;
+}
+
+/*Bottom menu*/
+
+.bottom-info {
+    height: 26px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(to bottom, #323333 0%, #444444 100%);
+    color: white;
+    padding: 4px;
+    font-size: 14px;
+    font-weight: lighter;
+}
+
+.bottom-info > a {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.bottom-info > .duration {
+    margin-left: 50px;
 }
 
 /*Misc*/

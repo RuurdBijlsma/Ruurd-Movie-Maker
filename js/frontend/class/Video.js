@@ -1,5 +1,5 @@
 class Video {
-    constructor({videoPlayer, videoContainer, thumbnailContainer, seekProgress, seekThumb, timeStamp, playButton}) {
+    constructor({videoPlayer, videoContainer, thumbnailContainer, seekProgress, seekThumb, timeStamp, playButton, frameRateElement, durationElement, fragmentControls, speedElement, volumeElement}) {
         this.fragments = [];
         this.videoPlayer = videoPlayer;
         this.videoContainer = videoContainer;
@@ -8,6 +8,11 @@ class Video {
         this.seekThumb = seekThumb;
         this.timeStamp = timeStamp;
         this.playButton = playButton;
+        this.frameRateElement = frameRateElement;
+        this.durationElement = durationElement;
+        this.fragmentControls = fragmentControls;
+        this.speedElement = speedElement;
+        this.volumeElement = volumeElement;
 
         document.addEventListener('mousemove', e => this.onMouseMove(e));
         document.addEventListener('mouseup', () => {
@@ -80,6 +85,8 @@ class Video {
             let thumbPercentage = this.activeFragment.currentTime / this.activeFragment.duration * 100;
             this.activeFragment.thumbnailSeeker.style.left = `calc(${thumbPercentage}% - 2px)`;
         }
+
+        this.updateBottomInfo();
     }
 
     static secondsToHms(seconds) {
@@ -203,13 +210,17 @@ class Video {
     }
 
     showPlayer() {
-        if (!this.playerIsVisible)
+        if (!this.playerIsVisible) {
             this.videoPlayer.style.display = "block";
+            this.fragmentControls.style.display = "block";
+        }
     }
 
     hidePlayer() {
-        if (this.playerIsVisible)
+        if (this.playerIsVisible) {
             this.videoPlayer.style.display = "none";
+            this.fragmentControls.style.display = "none";
+        }
     }
 
     removeFragment(fragment) {
@@ -335,7 +346,17 @@ class Video {
             value.active = true;
         }
 
+        this.updateBottomInfo();
         this._activeFragment = value;
+    }
+
+    updateBottomInfo() {
+        if (this.activeFragment) {
+            this.frameRateElement.innerText = "Frame rate: " + this.activeFragment.fps;
+            this.durationElement.innerText = "Duration: " + Video.secondsToHms(this.activeFragment.duration);
+            this.speedElement.innerText = `Playback speed: ${this.activeFragment.playbackSpeed}x`;
+            this.volumeElement.innerText = `Volume: ${Math.round(this.activeFragment.volume * 100)}%`;
+        }
     }
 
     get activeFragment() {

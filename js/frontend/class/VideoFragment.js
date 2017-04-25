@@ -54,6 +54,7 @@ class VideoFragment {
         if (value < 0 || value > 1)
             console.warn("Value must be within range [0-1]");
         this.element.volume = value;
+        this.executeEvent("timeChange");
     }
 
     get playbackSpeed() {

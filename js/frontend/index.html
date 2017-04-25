@@ -23,6 +23,20 @@
         <p>Import</p>
         <input type="file" accept="video/*" multiple onchange="addVideo(event)">
     </label>
+    <div class="fragment-controls">
+        <div class="speed-control">
+            <p class="playback-speed">Playback speed: 1x</p>
+            <p class="range-field speed-slider">
+                <input oninput="setSpeed(event);" type="range" min="0.125" step="0.125" max="8" value="1"/>
+            </p>
+        </div>
+        <div class="volume-control">
+            <p class="volume">Volume: 100%</p>
+            <p class="range-field speed-slider">
+                <input oninput="setVolume(event)" type="range" min="0" step="1" max="100" value="100"/>
+            </p>
+        </div>
+    </div>
     <label title="Export video" class="waves-effect waves-light menu-button right-aligned">
         <i class="material-icons">arrow_upward</i>
         <p>Export</p>
@@ -31,7 +45,6 @@
         <i class="material-icons">video_library</i>
         <p>Save</p>
     </label>
-    <input type="text" value="Untitled Project" class="center-align" title="Edit project title">
 </div>
 <div class="bottom-half">
     <div class="left-half">
@@ -63,5 +76,8 @@
         </div>
     </div>
 </div>
+<div class="bottom-info">
+    <a class="frame-rate"></a>
+    <a class="duration"></a></div>
 </body>
 </html>
