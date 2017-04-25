@@ -1,7 +1,8 @@
 #Todo
+* Export video met ffmpeg
+* UI to rearrange fragments
 * Command pattern voor undo en redo
 * Import video via "Open with", slepen naar app, en button
-* Export video
 * Export to youtube als er tijd over is
 * Vertical divider een sleep ding maken
 #Done
