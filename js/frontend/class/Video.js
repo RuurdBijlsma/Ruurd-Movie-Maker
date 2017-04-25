@@ -262,6 +262,7 @@ class Video {
         let newFragment = new VideoFragment(fragment.file);
         newFragment.playbackSpeed = fragment.playbackSpeed;
         newFragment.endPoint = fragment.endPoint;
+        newFragment.volume = fragment.volume;
 
         this.addFragment(newFragment, index);
 

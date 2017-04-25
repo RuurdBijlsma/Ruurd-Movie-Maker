@@ -46,6 +46,16 @@ class VideoFragment {
         this.executeEvent("timeChange");
     }
 
+    get volume() {
+        return this.element.volume;
+    }
+
+    set volume(value) {
+        if (value < 0 || value > 1)
+            console.warn("Value must be within range [0-1]");
+        this.element.volume = value;
+    }
+
     get playbackSpeed() {
         return this._playbackSpeed;
     }
