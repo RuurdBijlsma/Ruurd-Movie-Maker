@@ -11,6 +11,7 @@ Video editor created with Electron
 * Concatenate videos
 
 **Screenshot**
+
 ![Screenshot of the current version](screenshots/main.png?raw=true "Pre Alpha Screenshot")
 
 **Todo**
