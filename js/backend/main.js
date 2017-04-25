@@ -23,7 +23,10 @@ function createWindow() {
     // exportWindowsInstaller();
 
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
-    mainWindow = new BrowserWindow({width: width + 20, height: height + 20});
+    mainWindow = new BrowserWindow({
+        icon: path.join(__dirname, '../frontend/img/icon2.png'),
+        width: width + 20,
+        height: height + 20});
 
     let indexUrl = path.join(__dirname, '../frontend/index.html');
     mainWindow.loadURL(url.format({

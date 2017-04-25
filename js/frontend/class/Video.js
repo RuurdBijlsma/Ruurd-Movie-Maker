@@ -19,6 +19,7 @@ class Video {
             this.seeking = false;
         });
         this.seeking = false;
+        this.shouldShowContextMenu = false;
 
         this.createContextMenu();
     }

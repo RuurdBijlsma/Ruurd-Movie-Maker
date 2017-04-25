@@ -1,10 +1,11 @@
 #Todo
-* App icoon veranderen
 * Command pattern voor undo en redo
 * Import video via "Open with", slepen naar app, en button
 * Export video
 * Export to youtube als er tijd over is
+* Vertical divider een sleep ding maken
 #Done
+* App icoon veranderen
 * Edit video volume
 * Playbackspeed en end time over kopieren naar fragment dat gecreert is in split
 * Lijn om current time aan te geven in thumbnails in rechter paneel

@@ -19,14 +19,18 @@ function initialize() {
     });
 
     seeking = false;
+    dividerChanging = false;
 
     seekBar = document.getElementsByClassName('seek-bar')[0];
     document.addEventListener('mousemove', e => {
         if (seeking)
-            applySeekbar(e)
+            applySeekBar(e);
+        if (dividerChanging)
+            applyDividerChange(e);
     });
     document.addEventListener('mouseup', () => {
         seeking = false;
+        dividerChanging = false;
     });
     document.addEventListener('keydown', e => {
         console.log(e.key);
@@ -54,6 +58,10 @@ function initialize() {
 
     document.addEventListener('dragover', e => e.preventDefault(), false);
     document.addEventListener('drop', handleDrop, false);
+
+    divider = document.getElementsByClassName("vertical-divider")[0];
+    leftHalf = document.getElementsByClassName("left-half")[0];
+    rightHalf = document.getElementsByClassName("right-half")[0];
 }
 
 function deleteFragment() {
@@ -61,8 +69,7 @@ function deleteFragment() {
 }
 
 function setSpeed(e) {
-    let value = e.target.value;
-    video.activeFragment.playbackSpeed = value;
+    video.activeFragment.playbackSpeed = e.target.value;
 }
 
 function setVolume(e) {
@@ -70,7 +77,7 @@ function setVolume(e) {
     video.activeFragment.volume = value / 100;
 }
 
-function applySeekbar(e) {
+function applySeekBar(e) {
     let x = e.pageX - seekBar.offsetLeft;
     let width = seekBar.offsetWidth;
 
@@ -83,7 +90,22 @@ function applySeekbar(e) {
 function startSeeking(e) {
     if (e.button === 0) {
         seeking = true;
-        applySeekbar(e);
+        applySeekBar(e);
+    }
+}
+
+function startDividerChange(e) {
+    dividerChanging = true;
+    applyDividerChange(e);
+}
+
+function applyDividerChange(e) {
+    let minWidth = 500;
+    if (e.pageX >= minWidth) {
+        let x = e.pageX / window.innerWidth * 100;
+        divider.style.left = `calc(${x}% - 10px)`;
+        rightHalf.style.width = (100 - x) + '%';
+        leftHalf.style.width = x + '%';
     }
 }
 
