@@ -60,5 +60,3 @@ app.on('activate', function () {
 });
 
 require('./ffmpeg.js');
-
-exports.setFullScreen = flag => mainWindow.setFullscreen(flag);
