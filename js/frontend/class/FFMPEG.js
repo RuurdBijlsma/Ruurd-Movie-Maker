@@ -4,12 +4,23 @@ class FFMPEG {
     }
 
     //------------------------Commands------------------------//
+    get overwrite() {
+        return this.commands['overwrite'].command;
+    }
+
+    set overwrite(value) {
+        if (!value)
+            delete this.commands['overwrite'];
+        else
+            this.commands['overwrite'] = new FFMPEGCommand(0, '-y');
+    }
+
     get input() {
         return this.commands['input'].command;
     }
 
     set input(value) {
-        this.commands['input'] = new FFMPEGCommand('-i ' + value, 2);
+        this.commands['input'] = new FFMPEGCommand(2, '-i', value);
     }
 
     get output() {
@@ -17,7 +28,7 @@ class FFMPEG {
     }
 
     set output(value) {
-        this.commands['output'] = new FFMPEGCommand(value, 5);
+        this.commands['output'] = new FFMPEGCommand(5, value);
     }
 
     get startTime() {
@@ -25,7 +36,7 @@ class FFMPEG {
     }
 
     set startTime(value) {
-        this.commands['startTime'] = new FFMPEGCommand('-ss ' + value, 0);
+        this.commands['startTime'] = new FFMPEGCommand(0, '-ss', value);
     }
 
     get duration() {
@@ -33,7 +44,7 @@ class FFMPEG {
     }
 
     set duration(value) {
-        this.commands['duration'] = new FFMPEGCommand('-t ' + value, 3);
+        this.commands['duration'] = new FFMPEGCommand(3, '-t', value);
     }
 
     get frameRate() {
@@ -41,7 +52,7 @@ class FFMPEG {
     }
 
     set frameRate(value) {
-        this.commands['frameRate'] = new FFMPEGCommand('-r ' + value, 3);
+        this.commands['frameRate'] = new FFMPEGCommand(3, '-r', value);
     }
 
     //------------------------Filters------------------------//
@@ -52,7 +63,7 @@ class FFMPEG {
             array.push(value);
         }
 
-        return `-filter:v "${array.join(",")}"`;
+        return new FFMPEGCommand(4, '-filter:v', `"${array.join(",")}"`)
     }
 
     get playbackSpeed() {
@@ -63,20 +74,59 @@ class FFMPEG {
         this.filters['playbackSpeed'] = `setpts=${1 / value}*PTS`;
     }
 
-    get command() {
+    get commandArray() {
         let array = [];
         for (let key in this.commands) {
             let value = this.commands[key];
             array.push(value);
         }
 
-        array.push(new FFMPEGCommand(this.filter, 4));
+        if (Object.keys(this.filters).length > 0)
+            array.push(this.filter);
 
-        return array.sort((a, b) => a.priority - b.priority).map(c => c.command).join(" ");
+        let arrays = array.sort((a, b) => a.priority - b.priority).map(c => c.command);
+        return [].concat.apply([], arrays);
+    }
+
+    static runCommand(commandArray, stdoutFun = () => {
+    }, stdinFun = () => {
+    }, stderrFun = () => {
+    }) {
+        console.info("Running command: ", commandArray);
+        let process = runFFMPEGCommand(commandArray);
+        let stdout = '';
+        let stdin = '';
+        let stderr = '';
+
+        process.stdout.on('data', function (buf) {
+            stdout += buf;
+            stdoutFun(buf);
+        });
+
+        process.stdin.on('data', function (buf) {
+            stdin += buf;
+            stdinFun(buf);
+        });
+
+        process.stderr.on('data', function (buf) {
+            stderr += buf;
+            stderrFun(buf);
+        });
+
+        return new Promise(resolve => {
+            process.on('close', function (code) {
+                resolve({
+                    stdout: stdout,
+                    stdin: stdin,
+                    stderr: stderr,
+                    code: code
+                });
+            });
+        });
     }
 
     run() {
-        return runFfmpegCommand(this.command);
+        return FFMPEG.runCommand(this.commandArray);
     }
 
     reset() {
@@ -85,7 +135,5 @@ class FFMPEG {
         this.input = "";
         this.output = "output.mp4";
         this.startTime = 0;
-        this.frameRate = 60;
-        this.playbackSpeed = 1;
     }
 }

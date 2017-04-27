@@ -219,8 +219,8 @@ class VideoFragment {
     }
 
     updateFps() {
-        runFFMPEGCommand(['-i', this.file.path]).then(info => {
-            let words = info.in.split('\n').find(line => line.includes(' fps')).split(' fps')[0].split(' ');
+        FFMPEG.runCommand(['-i', this.file.path]).then(info => {
+            let words = info.stderr.split('\n').find(line => line.includes(' fps')).split(' fps')[0].split(' ');
             this._fps = Number(words[words.length - 1]);
             this.executeEvent("loadedFps");
         });
@@ -256,5 +256,24 @@ class VideoFragment {
                 }
             };
         });
+    }
+
+    export(outputFile, fps) {
+        let f = new FFMPEG();
+
+        f.input = this.file.path;
+        f.output = outputFile;
+        f.startTime = this.startPoint * this.duration;
+        f.overwrite = true;
+        if (this.duration !== this.element.duration)
+            f.duration = this.duration;
+        if (this.fps !== fps)
+            f.frameRate = fps;
+        if (this.playbackSpeed !== 1)
+            f.playbackSpeed = this.playbackSpeed;
+
+        console.log(f);
+
+        return f.run();
     }
 }

@@ -15,8 +15,8 @@ class FFMPEGCommand {
         this._priority = value;
     }
 
-    constructor(command, priority) {
-        this.command = command;
+    constructor(priority, ...command) {
         this.priority = priority;
+        this.command = command.map(c => c.toString());
     }
 }
