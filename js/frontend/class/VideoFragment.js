@@ -258,7 +258,7 @@ class VideoFragment {
         });
     }
 
-    export(outputFile, fps) {
+    export(outputFile = 'output.mp4', fps = null) {
         let f = new FFMPEG();
 
         f.input = this.file.path;
@@ -267,7 +267,7 @@ class VideoFragment {
         f.overwrite = true;
         if (this.duration !== this.element.duration)
             f.duration = this.duration;
-        if (this.fps !== fps)
+        if (this.fps !== fps && fps !== null)
             f.frameRate = fps;
         if (this.playbackSpeed !== 1)
             f.playbackSpeed = this.playbackSpeed;

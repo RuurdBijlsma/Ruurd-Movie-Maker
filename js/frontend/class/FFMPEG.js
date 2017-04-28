@@ -93,40 +93,38 @@ class FFMPEG {
     }, stderrFun = () => {
     }) {
         console.info("Running command: ", commandArray);
-        let process = runFFMPEGCommand(commandArray);
-        let stdout = '';
-        let stdin = '';
-        let stderr = '';
-
-        process.stdout.on('data', function (buf) {
-            stdout += buf;
-            stdoutFun(buf);
-        });
-
-        process.stdin.on('data', function (buf) {
-            stdin += buf;
-            stdinFun(buf);
-        });
-
-        process.stderr.on('data', function (buf) {
-            stderr += buf;
-            stderrFun(buf);
-        });
 
         return new Promise(resolve => {
-            process.on('close', function (code) {
+            let process = runFFMPEGCommand(commandArray, (stdout, stdin, stderr) => {
                 resolve({
                     stdout: stdout,
                     stdin: stdin,
-                    stderr: stderr,
-                    code: code
+                    stderr: stderr
                 });
+            });
+
+            process.stdout.on('data', buf => {
+                stdoutFun(buf);
+            });
+            process.stdin.on('data', buf => {
+                stdinFun(buf);
+            });
+
+            process.stderr.on('data', buf => {
+                stderrFun(buf);
             });
         });
     }
 
-    run() {
-        return FFMPEG.runCommand(this.commandArray);
+    run(process = () => {
+    }) {
+        return FFMPEG.runCommand(this.commandArray, stdout => {
+            console.log('[STD]: ', stdout);
+        }, stdin => {
+            console.log('[IN]: ', stdin)
+        }, stderr => {
+            console.log('[ERR]: ', stderr)
+        });
     }
 
     reset() {
