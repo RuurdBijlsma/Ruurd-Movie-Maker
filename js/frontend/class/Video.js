@@ -400,7 +400,7 @@ class Video {
                             tempFiles.push(`${i}.${fileType}`);
 
                         FFMPEG.concatFiles(tempFiles, `${outputFile}.${fileType}`, overwrite).then(() => {
-                            node.clearDirectory(tmpDir);
+                            node.deleteDirectory(tmpDir);
                             resolve();
                         });
                     }
