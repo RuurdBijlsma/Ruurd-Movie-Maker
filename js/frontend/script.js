@@ -1,5 +1,6 @@
 const {ipcRenderer, remote} = require('electron');
-const runFFMPEGCommand = remote.require("./ffmpeg.js").runFFMPEGCommand;
+const node = remote.require("./ffmpeg.js");
+const tmpDir = '.tmp';
 
 document.addEventListener("DOMContentLoaded", initialize);
 function initialize() {

@@ -5,6 +5,9 @@
 * Import video via "Open with", slepen naar app, en button
 * Export to youtube als er tijd over is
 * Vertical divider een sleep ding maken
+* als fragment geswitcht wordt de slider bovenin updaten om correcte value te laten zien
+* In ffmpeg export ook audio speed up doen met atempo
+* time passed ding beter maken als playbackspeed veranderd is
 #Done
 * App icoon veranderen
 * Edit video volume

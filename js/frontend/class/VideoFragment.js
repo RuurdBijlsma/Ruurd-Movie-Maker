@@ -258,7 +258,11 @@ class VideoFragment {
         });
     }
 
-    export(outputFile = 'output.mp4', fps = null) {
+    export({
+               outputFile = 'output.mp4',
+               fps = null,
+               process = s => console.log(s),
+           }) {
         let f = new FFMPEG();
 
         f.input = this.file.path;
@@ -272,8 +276,6 @@ class VideoFragment {
         if (this.playbackSpeed !== 1)
             f.playbackSpeed = this.playbackSpeed;
 
-        console.log(f);
-
-        return f.run();
+        return f.run(i => process(Math.min(i.time, this.duration)));
     }
 }

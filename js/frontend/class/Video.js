@@ -112,6 +112,11 @@ class Video {
         return hms;
     }
 
+    static hmsToSeconds(hms) {
+        let [h, m, s] = hms.split(':');
+        return Number(h) * 3600 + Number(m) * 60 + Number(s);
+    }
+
     get duration() {
         let duration = 0;
         for (let fragment of this.fragments) {
@@ -362,5 +367,45 @@ class Video {
 
     get activeFragment() {
         return this._activeFragment;
+    }
+
+    export({outputFile = 'output', fileType = 'mp4', overwrite = true, fps = null}) {
+        return new Promise(resolve => {
+            let i = 0;
+            let secondsProcessed = [];
+            let fragmentsToProcess = this.fragments.length;
+            let duration = this.duration;
+
+            node.clearDirectory(tmpDir);
+
+            ///todo create temp folder if it doesn't exist
+
+            for (let fragment of this.fragments) {
+                let index = false;
+                fragment.export({
+                    outputFile: `${tmpDir}/${i++}.${fileType}`,
+                    fps: fps,
+                    process: seconds => {
+                        if (index === false) {
+                            index = secondsProcessed.length;
+                        }
+                        secondsProcessed[index] = seconds;
+                        let percentage = Math.min(this.duration, secondsProcessed.reduce((a, b) => a + b) / duration);
+                        console.log(percentage);
+                    }
+                }).then(() => {
+                    if (--fragmentsToProcess <= 0) {
+                        let tempFiles = [];
+                        for (let i = 0; i < this.fragments.length; i++)
+                            tempFiles.push(`${i}.${fileType}`);
+
+                        FFMPEG.concatFiles(tempFiles, `${outputFile}.${fileType}`, overwrite).then(() => {
+                            node.clearDirectory(tmpDir);
+                            resolve();
+                        });
+                    }
+                });
+            }
+        });
     }
 }

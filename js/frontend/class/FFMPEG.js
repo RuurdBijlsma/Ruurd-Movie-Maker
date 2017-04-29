@@ -63,7 +63,7 @@ class FFMPEG {
             array.push(value);
         }
 
-        return new FFMPEGCommand(4, '-filter:v', `"${array.join(",")}"`)
+        return new FFMPEGCommand(4, '-filter:v', `${array.join(",")}`)
     }
 
     get playbackSpeed() {
@@ -89,29 +89,28 @@ class FFMPEG {
     }
 
     static runCommand(commandArray, stdoutFun = () => {
-    }, stdinFun = () => {
-    }, stderrFun = () => {
     }) {
         console.info("Running command: ", commandArray);
 
         return new Promise(resolve => {
-            let process = runFFMPEGCommand(commandArray, (stdout, stdin, stderr) => {
+            let process = node.runFFMPEGCommand(commandArray, (error, stdout, stderr) => {
                 resolve({
+                    error: error,
                     stdout: stdout,
-                    stdin: stdin,
                     stderr: stderr
                 });
             });
 
             process.stdout.on('data', buf => {
-                stdoutFun(buf);
+                console.warn('[REAL STDOUT]', buf);
             });
+
             process.stdin.on('data', buf => {
-                stdinFun(buf);
+                console.warn('[STDIN]', buf);
             });
 
             process.stderr.on('data', buf => {
-                stderrFun(buf);
+                stdoutFun(buf);
             });
         });
     }
@@ -119,11 +118,44 @@ class FFMPEG {
     run(process = () => {
     }) {
         return FFMPEG.runCommand(this.commandArray, stdout => {
-            console.log('[STD]: ', stdout);
-        }, stdin => {
-            console.log('[IN]: ', stdin)
-        }, stderr => {
-            console.log('[ERR]: ', stderr)
+            let info = FFMPEG.getFrameInfo(stdout);
+            if (info) process(info);
+        });
+    }
+
+    static getFrameInfo(string) {
+        if (string.includes('frame') && string.includes('fps') && string.includes('q') && string.includes('size') && string.includes('time')) {
+            let frame, fps, quality, size, hms;
+
+            frame = string.split('frame=')[1].split('fps')[0].trim();
+            fps = string.split('fps=')[1].split('q')[0].trim();
+            quality = string.split('q=')[1].split('size')[0].trim();
+            size = string.split('size=')[1].split('time')[0].trim();
+            hms = string.split('time=')[1].split('bitrate')[0].trim();
+
+            return {
+                frame: frame,
+                fps: fps,
+                quality: quality,
+                size: size,
+                time: Video.hmsToSeconds(hms)
+            };
+        }
+        return null;
+    }
+
+    static concatFiles(files, outputFile, overwrite = true) {
+        let content = files.map(f => "file '" + f + "'").join('\n');
+        let listName = 'files.txt';
+        console.log('files.txt:', content);
+        node.createFile(tmpDir + '/' + listName, content);
+
+        let commandArray = ['-f', 'concat', '-safe', 0, '-i', tmpDir + '/' + listName, '-c', 'copy', outputFile];
+        if (overwrite)
+            commandArray.unshift('-y');
+
+        return FFMPEG.runCommand(commandArray).then(d => {
+            node.deleteFile(tmpDir + '/files.txt');
         });
     }
 
