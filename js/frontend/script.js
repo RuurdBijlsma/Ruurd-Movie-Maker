@@ -1,4 +1,5 @@
-const {ipcRenderer, remote} = require('electron');
+const {remote} = require('electron');
+const {dialog} = require('electron').remote;
 const node = remote.require("./ffmpeg.js");
 const tmpDir = '.tmp';
 
@@ -17,6 +18,8 @@ function initialize() {
         fragmentControls: document.getElementsByClassName('fragment-controls')[0],
         speedElement: document.getElementsByClassName('playback-speed')[0],
         volumeElement: document.getElementsByClassName('volume')[0],
+        speedInput: document.getElementsByClassName('speed-input')[0],
+        volumeInput: document.getElementsByClassName('volume-input')[0],
     });
 
     seeking = false;
@@ -63,6 +66,9 @@ function initialize() {
     divider = document.getElementsByClassName("vertical-divider")[0];
     leftHalf = document.getElementsByClassName("left-half")[0];
     rightHalf = document.getElementsByClassName("right-half")[0];
+
+    $('#exportModal').modal();
+    $('select').material_select();
 }
 
 function deleteFragment() {
@@ -176,4 +182,64 @@ function handleDrop(e) {
 
 function addVideo(e) {
     video.addFragments(e.target.files);
+}
+
+function exportVideo() {
+    if (video.fragments.length <= 0) {
+        dialog.showMessageBox(remote.getCurrentWindow(),
+            {
+                type: 'warning',
+                buttons: ['¯\\_(ツ)_/¯'],
+                title: 'Warning',
+                message: 'There are no videos to export',
+                detail: 'Add videos before exporting'
+            });
+        return;
+    }
+    let frameRate = document.getElementById('frame-rate').value;
+    let format = document.getElementById('format-selector').value;
+    let config = new ExportConfig({
+        fps: frameRate,
+        format: format
+    });
+
+    disableMouse();
+    let commonName = sharedStart(video.fragments.map(f => f.file.name)).trim();
+    dialog.showSaveDialog(remote.getCurrentWindow(),
+        {
+            title: "Export video",
+            buttonLabel: "Export",
+            defaultPath: `${commonName.length === 0 ? 'video' : commonName}.${format}`,
+            filters: [
+                {
+                    name: `Video/${format}`,
+                    extensions: [`Video/${format}`]
+                },
+                {
+                    name: `All files/*`,
+                    extensions: ['*']
+                }
+            ],
+        }, path => {
+            enableMouse();
+            if (path === undefined)return;
+            video.export({
+                config: config,
+                outputFile: path,
+                overwrite: true,
+            });
+        });
+}
+
+function disableMouse() {
+    document.body.style.pointerEvents = "none";
+}
+function enableMouse() {
+    document.body.style.pointerEvents = "all";
+}
+function sharedStart(array) {
+    let A = array.concat().sort(),
+        a1 = A[0], a2 = A[A.length - 1], L = a1.length, i = 0;
+    while (i < L && a1.charAt(i) === a2.charAt(i)) i++;
+    return a1.substring(0, i);
 }

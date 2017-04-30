@@ -17,6 +17,7 @@
     <script src="class/VideoFragment.js"></script>
     <script src="class/FFMPEG.js"></script>
     <script src="class/FFMPEGCommand.js"></script>
+    <script src="class/ExportConfig.js"></script>
 </head>
 <body>
 <div class="menu">
@@ -29,20 +30,22 @@
         <div class="speed-control">
             <p class="playback-speed">Playback speed: 1x</p>
             <p class="range-field speed-slider">
-                <input oninput="setSpeed(event);" type="range" min="0.125" step="0.125" max="8" value="1"/>
+                <input oninput="setSpeed(event);" type="range" min="0.125" step="0.125" max="8" value="1"
+                       class="speed-input"/>
             </p>
         </div>
         <div class="volume-control">
             <p class="volume">Volume: 100%</p>
             <p class="range-field speed-slider">
-                <input oninput="setVolume(event)" type="range" min="0" step="1" max="100" value="100"/>
+                <input oninput="setVolume(event)" type="range" min="0" step="1" max="100" value="100"
+                       class="volume-input"/>
             </p>
         </div>
     </div>
-    <label title="Export video" class="waves-effect waves-light menu-button right-aligned">
+    <a title="Export video" href="#exportModal" class="waves-effect waves-light menu-button right-aligned">
         <i class="material-icons">arrow_upward</i>
         <p>Export</p>
-    </label>
+    </a>
     <label title="Save project" class="waves-effect waves-light menu-button right-aligned">
         <i class="material-icons">video_library</i>
         <p>Save</p>
@@ -80,6 +83,32 @@
 </div>
 <div class="bottom-info">
     <a class="frame-rate"></a>
-    <a class="duration"></a></div>
+    <a class="duration"></a>
+</div>
+
+<div id="exportModal" class="modal">
+    <div class="modal-content">
+        <h4>Export Video</h4>
+        <div class="input-field col s12">
+            <select id="format-selector">
+                <option selected value="mp4">MP4</option>
+                <option value="avi">AVI</option>
+                <option value="flv">FLV</option>
+            </select>
+            <label>Choose a video format</label>
+        </div>
+
+        <div class="input-field col s6">
+            <input placeholder="Frames per seconds" value="60" id="frame-rate" type="number" class="validate">
+            <label for="frame-rate">Framerate</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat"
+           onclick="exportVideo()">Export</a>
+    </div>
+
+</div>
+
 </body>
 </html>

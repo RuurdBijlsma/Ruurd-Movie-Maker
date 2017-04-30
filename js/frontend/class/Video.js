@@ -1,5 +1,5 @@
 class Video {
-    constructor({videoPlayer, videoContainer, thumbnailContainer, seekProgress, seekThumb, timeStamp, playButton, frameRateElement, durationElement, fragmentControls, speedElement, volumeElement}) {
+    constructor({videoPlayer, videoContainer, thumbnailContainer, seekProgress, seekThumb, timeStamp, playButton, frameRateElement, durationElement, fragmentControls, speedElement, volumeElement, speedInput, volumeInput}) {
         this.fragments = [];
         this.videoPlayer = videoPlayer;
         this.videoContainer = videoContainer;
@@ -13,6 +13,8 @@ class Video {
         this.fragmentControls = fragmentControls;
         this.speedElement = speedElement;
         this.volumeElement = volumeElement;
+        this.speedInput = speedInput;
+        this.volumeInput = volumeInput;
 
         document.addEventListener('mousemove', e => this.onMouseMove(e));
         document.addEventListener('mouseup', () => {
@@ -85,6 +87,9 @@ class Video {
         if (this.activeFragment) {
             let thumbPercentage = this.activeFragment.currentTime / this.activeFragment.duration * 100;
             this.activeFragment.thumbnailSeeker.style.left = `calc(${thumbPercentage}% - 2px)`;
+
+            this.speedInput.value = this.activeFragment.playbackSpeed;
+            this.volumeInput.value = this.activeFragment.volume * 100;
         }
 
         this.updateBottomInfo();
@@ -369,7 +374,7 @@ class Video {
         return this._activeFragment;
     }
 
-    export({outputFile = 'output', fileType = 'mp4', overwrite = true, fps = null}) {
+    export({config = ExportConfig.default, overwrite = true, outputFile = 'output.mp4'}) {
         return new Promise(resolve => {
             let i = 0;
             let secondsProcessed = [];
@@ -378,13 +383,11 @@ class Video {
 
             node.clearDirectory(tmpDir);
 
-            ///todo create temp folder if it doesn't exist
-
             for (let fragment of this.fragments) {
                 let index = false;
                 fragment.export({
-                    outputFile: `${tmpDir}/${i++}.${fileType}`,
-                    fps: fps,
+                    outputFile: `${tmpDir}/${i++}.${config.format}`,
+                    fps: config.fps,
                     process: seconds => {
                         if (index === false) {
                             index = secondsProcessed.length;

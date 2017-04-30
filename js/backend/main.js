@@ -1,5 +1,5 @@
 const electron = require('electron');
-const {app, BrowserWindow, ipcMain} = electron;
+const {app, BrowserWindow} = electron;
 
 const path = require('path');
 const url = require('url');
@@ -26,7 +26,8 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         icon: path.join(__dirname, '../frontend/img/icon2.png'),
         width: width + 20,
-        height: height + 20});
+        height: height + 20
+    });
 
     let indexUrl = path.join(__dirname, '../frontend/index.html');
     mainWindow.loadURL(url.format({

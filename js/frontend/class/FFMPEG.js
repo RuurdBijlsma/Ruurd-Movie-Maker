@@ -57,13 +57,15 @@ class FFMPEG {
 
     //------------------------Filters------------------------//
     get filter() {
-        let array = [];
+        let videoFilters = [],
+            audioFilters = [];
         for (let key in this.filters) {
             let value = this.filters[key];
-            array.push(value);
+            videoFilters.push(value.v);
+            audioFilters.push(value.a);
         }
 
-        return new FFMPEGCommand(4, '-filter:v', `${array.join(",")}`)
+        return new FFMPEGCommand(4, '-filter:v', `${videoFilters.join(",")}`, '-filter:a', `${audioFilters.join(",")}`)
     }
 
     get playbackSpeed() {
@@ -71,7 +73,24 @@ class FFMPEG {
     }
 
     set playbackSpeed(value) {
-        this.filters['playbackSpeed'] = `setpts=${1 / value}*PTS`;
+        let videoMultiplier = 1/value;
+        let audioMultiplier = [];
+
+        while (value < 0.5) {
+            value *= 2;
+            audioMultiplier.push(0.5);
+        }
+        while (value > 2) {
+            value /= 2;
+            audioMultiplier.push(2);
+        }
+        audioMultiplier.push(value);
+        let audioFilter = audioMultiplier.map(a => `atempo=${a}`).join(',');
+
+        this.filters['playbackSpeed'] = {
+            v: `setpts=${videoMultiplier}*PTS`,
+            a: audioFilter
+        };
     }
 
     get commandArray() {

@@ -1,14 +1,16 @@
 #Todo
-* Export video met ffmpeg
 * UI to rearrange fragments
 * Command pattern voor undo en redo
-* Import video via "Open with", slepen naar app, en button
+* Import video via "Open with"
 * Export to youtube als er tijd over is
-* Vertical divider een sleep ding maken
-* als fragment geswitcht wordt de slider bovenin updaten om correcte value te laten zien
-* In ffmpeg export ook audio speed up doen met atempo
+* Width, height en bitrate aan exportconfig en ffmpeg toevoegen
 * time passed ding beter maken als playbackspeed veranderd is
 #Done
+* als fragment geswitcht wordt de slider bovenin updaten om correcte value te laten zien
+* In ffmpeg export ook audio speed up doen met atempo
+* Vertical divider een sleep ding maken
+* Import video met slepen en import button
+* Export video met ffmpeg
 * App icoon veranderen
 * Edit video volume
 * Playbackspeed en end time over kopieren naar fragment dat gecreert is in split

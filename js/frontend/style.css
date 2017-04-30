@@ -291,3 +291,15 @@ video {
 *:focus {
     outline: none;
 }
+
+.modal {
+    width: 30% !important;
+}
+
+input[type=text], input[type=number] {
+    cursor: text;
+}
+
+.menu a {
+    color: #9e9e9e !important;
+}
