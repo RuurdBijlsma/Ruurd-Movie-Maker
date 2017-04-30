@@ -1,6 +1,6 @@
 const {remote} = require('electron');
 const {dialog} = require('electron').remote;
-const node = remote.require("./ffmpeg.js");
+const node = remote.require('./js/backend/ffmpeg.js');
 const tmpDir = '.tmp';
 
 document.addEventListener("DOMContentLoaded", initialize);
@@ -253,7 +253,7 @@ function getFileName(format = 'mp4') {
         commonName = commonName.substring(0, commonName.length - format.length);
     }
 
-    return `${commonName.length === 0 ? 'video' : commonName}${format}`;
+    return `${commonName.length === 0 ? 'video' : commonName}`;
 }
 
 function disableMouse() {
