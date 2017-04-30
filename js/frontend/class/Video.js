@@ -374,7 +374,10 @@ class Video {
         return this._activeFragment;
     }
 
-    export({config = ExportConfig.default, overwrite = true, outputFile = 'output.mp4'}) {
+    export({
+               config = ExportConfig.default, overwrite = true, outputFile = 'output', onProgress = () => {
+        }
+           }) {
         return new Promise(resolve => {
             let i = 0;
             let secondsProcessed = [];
@@ -394,15 +397,15 @@ class Video {
                         }
                         secondsProcessed[index] = seconds;
                         let percentage = Math.min(this.duration, secondsProcessed.reduce((a, b) => a + b) / duration);
-                        console.log(percentage);
+                        onProgress(percentage);
                     }
                 }).then(() => {
                     if (--fragmentsToProcess <= 0) {
                         let tempFiles = [];
                         for (let i = 0; i < this.fragments.length; i++)
-                            tempFiles.push(`${i}.${fileType}`);
+                            tempFiles.push(`${i}.${config.format}`);
 
-                        FFMPEG.concatFiles(tempFiles, `${outputFile}.${fileType}`, overwrite).then(() => {
+                        FFMPEG.concatFiles(tempFiles, `${outputFile}.${config.format}`, overwrite).then(() => {
                             node.deleteDirectory(tmpDir);
                             resolve();
                         });

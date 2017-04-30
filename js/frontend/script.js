@@ -185,8 +185,9 @@ function addVideo(e) {
 }
 
 function exportVideo() {
+    let window = remote.getCurrentWindow();
     if (video.fragments.length <= 0) {
-        dialog.showMessageBox(remote.getCurrentWindow(),
+        dialog.showMessageBox(window,
             {
                 type: 'warning',
                 buttons: ['¯\\_(ツ)_/¯'],
@@ -204,16 +205,15 @@ function exportVideo() {
     });
 
     disableMouse();
-    let commonName = sharedStart(video.fragments.map(f => f.file.name)).trim();
-    dialog.showSaveDialog(remote.getCurrentWindow(),
+    dialog.showSaveDialog(window,
         {
             title: "Export video",
             buttonLabel: "Export",
-            defaultPath: `${commonName.length === 0 ? 'video' : commonName}.${format}`,
+            defaultPath: getFileName(format),
             filters: [
                 {
                     name: `Video/${format}`,
-                    extensions: [`Video/${format}`]
+                    extensions: [`${format}`]
                 },
                 {
                     name: `All files/*`,
@@ -221,14 +221,39 @@ function exportVideo() {
                 }
             ],
         }, path => {
-            enableMouse();
-            if (path === undefined)return;
+            if (path === undefined) {
+                enableMouse();
+                return;
+            }
+            console.log(path);
             video.export({
                 config: config,
                 outputFile: path,
                 overwrite: true,
+                onProgress: p => {
+                    console.log(p);
+                    window.setProgressBar(p);
+                }
+            }).then(d => {
+                window.setProgressBar(0);
+                console.log('Done!', d);
+                enableMouse();
             });
         });
+}
+
+function getFileName(format = 'mp4') {
+    format = '.' + format;
+    let commonName = sharedStart(video.fragments.map(f => f.file.name)).trim();
+
+    console.log('initialname:', commonName);
+
+    if (commonName.includes(format)) {
+        console.log(format + ' is included');
+        commonName = commonName.substring(0, commonName.length - format.length);
+    }
+
+    return `${commonName.length === 0 ? 'video' : commonName}${format}`;
 }
 
 function disableMouse() {
