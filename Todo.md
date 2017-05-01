@@ -1,4 +1,5 @@
 #Todo
+* Installer maken zonder installer script erin
 * UI to rearrange fragments
 * Command pattern voor undo en redo
 * Import video via "Open with"

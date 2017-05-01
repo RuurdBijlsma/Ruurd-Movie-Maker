@@ -11,16 +11,19 @@ let mainWindow;
 function exportWindowsInstaller() {
     const electronInstaller = require('electron-winstaller');
     resultPromise = electronInstaller.createWindowsInstaller({
-        appDirectory: 'C:\\Users\\ruurd\\Documents\\VideoEditor\\node_modules\\electron\\dist',
+        appDirectory: 'C:\\Users\\ruurd\\Documents\\Ruurd Movie Maker',
+        outputDirectory: 'C:\\Users\\ruurd\\Documents\\Ruurd Movie Maker\\out',
         authors: 'Ruurd Bijlsma',
-        exe: 'Video-editor.exe'
+        exe: 'VideoEditor.exe'
     });
+
+    console.log('Exporting file... Please wait');
 
     resultPromise.then(() => console.log("It worked!"), (e) => console.log(`No dice: ${e.message}`));
 }
 
 function createWindow() {
-    // exportWindowsInstaller();
+    exportWindowsInstaller();
 
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
@@ -39,7 +42,7 @@ function createWindow() {
     mainWindow.setMenu(null);
     mainWindow.maximize();
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function () {
         mainWindow = null;

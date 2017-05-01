@@ -1,20 +1,19 @@
 {
-  "name": "electron-quick-start",
+  "name": "Ruurd_Movie_Maker",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Video editor",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/RuurdBijlsma/Electron-Video-Editor",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Video",
+    "Editor",
+    "Movie",
+    "Maker"
   ],
-  "author": "GitHub",
+  "author": "Ruurd Bijlsma",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "~1.6.2",
