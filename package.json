@@ -20,6 +20,7 @@
     "electron-winstaller": "^2.5.2"
   },
   "dependencies": {
-    "electron-context-menu": "^0.9.0"
+    "electron-context-menu": "^0.9.0",
+    "electron-is-dev": "^0.1.2"
   }
 }

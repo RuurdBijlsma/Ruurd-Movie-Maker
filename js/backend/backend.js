@@ -1,5 +1,6 @@
 const electron = require('electron');
 const {app, BrowserWindow} = electron;
+const isDev = require('electron-is-dev');
 
 const path = require('path');
 const url = require('url');
@@ -23,7 +24,8 @@ function exportWindowsInstaller() {
 }
 
 function createWindow() {
-    exportWindowsInstaller();
+    // if (isDev)
+    //     exportWindowsInstaller();
 
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
@@ -42,7 +44,8 @@ function createWindow() {
     mainWindow.setMenu(null);
     mainWindow.maximize();
 
-    // mainWindow.webContents.openDevTools();
+    if (isDev)
+        mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function () {
         mainWindow = null;

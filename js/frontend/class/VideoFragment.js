@@ -275,6 +275,10 @@ class VideoFragment {
             f.frameRate = fps;
         if (this.playbackSpeed !== 1)
             f.playbackSpeed = this.playbackSpeed;
+        if (this.volume !== 1)
+            f.volume = this.volume;
+
+        console.log(f);
 
         return f.run(i => process(Math.min(i.time, this.duration)));
     }

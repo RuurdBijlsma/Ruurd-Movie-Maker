@@ -1,7 +1,11 @@
 const execFile = require("child_process").execFile;
 const fs = require('fs');
+const isDev = require('electron-is-dev');
 
-exports.runFFMPEGCommand = (commandArray, done) => execFile("Resources/ffmpeg.exe", commandArray, done);
+exports.runFFMPEGCommand = (commandArray, done) => {
+    let path = (isDev ? "" : "resources/app/" ) + "Resources/ffmpeg.exe";
+    return execFile(path, commandArray, done);
+};
 
 exports.createFile = (name, content) => {
     return new Promise((resolve, error) => {

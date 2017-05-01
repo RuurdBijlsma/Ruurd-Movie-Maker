@@ -61,11 +61,20 @@ class FFMPEG {
             audioFilters = [];
         for (let key in this.filters) {
             let value = this.filters[key];
-            videoFilters.push(value.v);
-            audioFilters.push(value.a);
+            if (value.v !== undefined)
+                videoFilters.push(value.v);
+            if (value.a !== undefined)
+                audioFilters.push(value.a);
         }
-
-        return new FFMPEGCommand(4, '-filter:v', `${videoFilters.join(",")}`, '-filter:a', `${audioFilters.join(",")}`)
+        if (videoFilters.length > 0) {
+            if (audioFilters.length > 0) {
+                return new FFMPEGCommand(4, '-filter:v', `${videoFilters.join(",")}`, '-filter:a', `${audioFilters.join(",")}`);
+            } else {
+                return new FFMPEGCommand(4, '-filter:v', `${videoFilters.join(",")}`);
+            }
+        } else if (audioFilters.length > 0) {
+            return new FFMPEGCommand(4, '-filter:a', `${audioFilters.join(",")}`);
+        }
     }
 
     get playbackSpeed() {
@@ -73,7 +82,7 @@ class FFMPEG {
     }
 
     set playbackSpeed(value) {
-        let videoMultiplier = 1/value;
+        let videoMultiplier = 1 / value;
         let audioMultiplier = [];
 
         while (value < 0.5) {
@@ -93,6 +102,16 @@ class FFMPEG {
         };
     }
 
+    get volume() {
+        return this.filters['volume'];
+    }
+
+    set volume(value) {
+        this.filters['volume'] = {
+            a: `volume=${value}`
+        }
+    }
+
     get commandArray() {
         let array = [];
         for (let key in this.commands) {
@@ -100,8 +119,9 @@ class FFMPEG {
             array.push(value);
         }
 
-        if (Object.keys(this.filters).length > 0)
-            array.push(this.filter);
+        let filter = this.filter;
+        if (filter !== undefined)
+            array.push(filter);
 
         let arrays = array.sort((a, b) => a.priority - b.priority).map(c => c.command);
         return [].concat.apply([], arrays);
