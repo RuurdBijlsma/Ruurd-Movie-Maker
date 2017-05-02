@@ -3,5 +3,9 @@ class Command {
         Command.undoStack.push(this);
     }
 
-    static undoStack = new UndoStack();
+    static get undoStack() {
+        if (!Command._undoStack)
+            Command._undoStack = new UndoStack();
+        return Command._undoStack;
+    }
 }
