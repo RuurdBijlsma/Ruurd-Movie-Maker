@@ -5,44 +5,48 @@ const ResumableUpload = require('node-youtube-resumable-upload');
 
 class Youtube {
     static upload({path, title, description, status = 'public'}) {
-        Youtube.getAccessToken().then(tokens => {
-            console.log(tokens);
+        Youtube.getAccessToken().then(() => {
+            Youtube.getAuthClient().then(client => {
+                console.log(client);
 
-            const metadata = {
-                snippet: {
-                    title: title,
-                    description: description
-                },
-                status: {privacyStatus: status}
-            };
-            const resumableUpload = new ResumableUpload(); //create new ResumableUpload
-            resumableUpload.tokens = tokens; //Google OAuth2 tokens
-            resumableUpload.filepath = path;
-            resumableUpload.metadata = metadata; //include the snippet and status for the video
-            resumableUpload.retry = 3; // Maximum retries when upload failed.
-            resumableUpload.upload();
-            resumeableUpload.on('progress', progress => {
-                console.log('[PROGRESS]', progress);
+                const metadata = {
+                    snippet: {
+                        title: title,
+                        description: description
+                    },
+                    status: {privacyStatus: status}
+                };
+                const resumableUpload = new ResumableUpload(); //create new ResumableUpload
+                resumableUpload.tokens = tokens; //Google OAuth2 tokens
+                resumableUpload.filepath = path;
+                resumableUpload.metadata = metadata; //include the snippet and status for the video
+                resumableUpload.retry = 3; // Maximum retries when upload failed.
+                resumableUpload.upload();
+                resumeableUpload.on('progress', progress => {
+                    console.log('[PROGRESS]', progress);
+                });
+                resumableUpload.on('success', success => {
+                    console.log('[PROGRESS]', success);
+                });
+                resumableUpload.on('error', error => {
+                    console.log('[PROGRESS]', error);
+                });
             });
-            resumableUpload.on('success', success => {
-                console.log('[PROGRESS]', success);
-            });
-            resumableUpload.on('error', error => {
-                console.log('[PROGRESS]', error);
-            });
-        });
+        }).catch(err => console.debug('Could not get tokens:', err));
     }
-
+///todo: refresh tokens functionlity maken als dit weer werkt
     static getAccessToken() {
-        return new Promise(resolve => {
+        return new Promise((resolve, error) => {
             Youtube.getAuthCode().then(code => {
                 Youtube.getAuthClient().then(client => {
                     client.getToken(code, (err, tokens) => {
-                        console.log(err, tokens);
                         // Now tokens contains an access_token and an optional refresh_token. Save them.
                         if (!err) {
-                            oauth2Client.setCredentials(tokens);
+                            client.setCredentials(tokens);
+                            localStorage.authClient = JSON.stringify(client);
                             resolve(tokens);
+                        } else {
+                            error(err);
                         }
                     });
                 });
