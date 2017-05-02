@@ -183,7 +183,7 @@ class Video {
 
         fragment.thumbnailElement.addEventListener('mouseup', () => {
             if (!seeking) {
-                if (fragment !== this.activeFragment) {
+                if (this.activeFragment && fragment !== this.activeFragment) {
                     this.activeFragment.currentTime = 0;
                     this.activeFragment = fragment;
                     this.pause();
@@ -211,6 +211,8 @@ class Video {
             this.thumbnailContainer.appendChild(fragment.thumbnailElement);
             this.fragments.push(fragment);
         }
+
+        this.activeFragment = fragment;
 
         this.showPlayer();
     }
