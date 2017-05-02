@@ -4,6 +4,7 @@
       <w>bitrate</w>
       <w>ffmpeg</w>
       <w>fullscreen</w>
+      <w>resumable</w>
       <w>stdin</w>
     </words>
   </dictionary>

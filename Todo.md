@@ -1,12 +1,12 @@
 #Todo
-* Installer maken zonder installer script erin
+* Command to reaarange fragments
 * UI to rearrange fragments
-* Command pattern voor undo en redo
 * Import video via "Open with"
 * Export to youtube als er tijd over is
 * Width, height en bitrate aan exportconfig en ffmpeg toevoegen
 * time passed ding beter maken als playbackspeed veranderd is
 #Done
+* Command pattern voor undo en redo
 * als fragment geswitcht wordt de slider bovenin updaten om correcte value te laten zien
 * In ffmpeg export ook audio speed up doen met atempo
 * Vertical divider een sleep ding maken
