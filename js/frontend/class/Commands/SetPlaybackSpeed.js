@@ -1,9 +1,9 @@
 class SetPlaybackSpeed extends Command {
-    constructor(fragment, newSpeed, oldSpeed) {
+    constructor(fragment, newSpeed) {
         super();
         this.fragment = fragment;
+        this.oldSpeed = fragment.playbackSpeed;
         this.newSpeed = newSpeed;
-        this.oldSpeed = oldSpeed;
     }
 
     execute() {

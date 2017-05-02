@@ -38,14 +38,14 @@
         <div class="speed-control">
             <p class="playback-speed">Playback speed: 1x</p>
             <p class="range-field speed-slider">
-                <input oninput="setSpeed(event);" type="range" min="0.125" step="0.125" max="8" value="1"
+                <input onchange="setSpeed(event);" type="range" min="0.125" step="0.125" max="8" value="1"
                        class="speed-input"/>
             </p>
         </div>
         <div class="volume-control">
             <p class="volume">Volume: 100%</p>
             <p class="range-field speed-slider">
-                <input oninput="setVolume(event)" type="range" min="0" step="1" max="100" value="100"
+                <input onchange="setVolume(event)" type="range" min="0" step="1" max="100" value="100"
                        class="volume-input"/>
             </p>
         </div>

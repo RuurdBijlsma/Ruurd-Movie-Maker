@@ -1,9 +1,9 @@
 class SetVolume extends Command {
-    constructor(fragment, newVolume, oldVolume) {
+    constructor(fragment, newVolume) {
         super();
         this.fragment = fragment;
+        this.oldVolume = fragment.volume;
         this.newVolume = newVolume;
-        this.oldVolume = oldVolume;
     }
 
     execute() {

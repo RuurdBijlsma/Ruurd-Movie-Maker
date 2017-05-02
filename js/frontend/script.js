@@ -69,6 +69,9 @@ function initialize() {
 
     $('#exportModal').modal();
     $('select').material_select();
+
+    if (localStorage.divider !== undefined)
+        changeDivider(localStorage.divider);
 }
 
 function deleteFragment() {
@@ -76,12 +79,11 @@ function deleteFragment() {
 }
 
 function setSpeed(e) {
-    video.activeFragment.playbackSpeed = e.target.value;
+    Command.execute(new SetPlaybackSpeed(video.activeFragment, e.target.value));
 }
 
 function setVolume(e) {
-    let value = e.target.value;
-    video.activeFragment.volume = value / 100;
+    Command.execute(new SetVolume(video.activeFragment, e.target.value / 100));
 }
 
 function applySeekBar(e) {
@@ -110,10 +112,15 @@ function applyDividerChange(e) {
     let minWidth = 500;
     if (e.pageX >= minWidth) {
         let x = e.pageX / window.innerWidth * 100;
-        divider.style.left = `calc(${x}% - 10px)`;
-        rightHalf.style.width = (100 - x) + '%';
-        leftHalf.style.width = x + '%';
+        changeDivider(x);
     }
+}
+
+function changeDivider(x) {
+    divider.style.left = `calc(${x}% - 10px)`;
+    rightHalf.style.width = (100 - x) + '%';
+    leftHalf.style.width = x + '%';
+    localStorage.divider = x;
 }
 
 function toggleFullscreen() {
