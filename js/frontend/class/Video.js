@@ -290,6 +290,8 @@ class Video {
 
         newFragment.startPoint = timePercent;
         fragment.endPoint = timePercent;
+
+        return newFragment;
     }
 
     onMouseMove(e) {
