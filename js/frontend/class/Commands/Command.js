@@ -3,17 +3,16 @@ class Command {
         Command.undoStack.push(this);
     }
 
-    static execute(command) {
-        Command.undoStack.push(command);
-        command.execute();
-    }
-
     static undo() {
         Command.undoStack.undo();
+
+        console.log(Command.undoStack.toString());
     }
 
     static redo() {
         Command.undoStack.redo();
+
+        console.log(Command.undoStack.toString());
     }
 
     static get undoStack() {

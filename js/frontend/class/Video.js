@@ -139,8 +139,7 @@ class Video {
 
         for (let file of files) {
             let fragment = new VideoFragment(file);
-
-            this.addFragment(fragment);
+            new AddFragment(this, fragment).execute();
         }
     }
 
@@ -149,17 +148,17 @@ class Video {
             prepend: (params, browserWindow) => [{
                 label: "Set start point",
                 click: () => {
-                    this.activeFragment.startPoint = this.activeFragment.currentPoint;
+                    new SetStartPoint(this.activeFragment, this.activeFragment.currentPoint).execute();
                 }
             }, {
                 label: "Set end point",
                 click: () => {
-                    this.activeFragment.endPoint = this.activeFragment.currentPoint;
+                    new SetEndPoint(this.activeFragment, this.activeFragment.currentPoint).execute();
                 }
             }, {
                 label: "Split video",
                 click: () => {
-                    this.split(this.activeFragment, this.activeFragment.currentPoint);
+                    new SplitVideo(this, this.activeFragment, this.activeFragment.currentPoint).execute();
                 }
             }],
             shouldShowMenu: (e, params) => {

@@ -37,7 +37,6 @@ function initialize() {
         dividerChanging = false;
     });
     document.addEventListener('keydown', e => {
-        console.log(e.key);
         switch (e.key) {
             case "Escape":
                 exitFullscreen();
@@ -57,6 +56,14 @@ function initialize() {
             case "Delete":
                 deleteFragment();
                 break;
+            case "y":
+                if (e.ctrlKey)
+                    Command.redo();
+                break;
+            case "z":
+                if (e.ctrlKey)
+                    Command.undo();
+                break;
         }
     });
 
@@ -75,15 +82,15 @@ function initialize() {
 }
 
 function deleteFragment() {
-    video.removeFragment(video.activeFragment);
+    new DeleteFragment(video, video.activeFragment).execute();
 }
 
 function setSpeed(e) {
-    Command.execute(new SetPlaybackSpeed(video.activeFragment, e.target.value));
+    new SetPlaybackSpeed(video.activeFragment, e.target.value).execute();
 }
 
 function setVolume(e) {
-    Command.execute(new SetVolume(video.activeFragment, e.target.value / 100));
+    new SetVolume(video.activeFragment, e.target.value / 100).execute();
 }
 
 function applySeekBar(e) {
