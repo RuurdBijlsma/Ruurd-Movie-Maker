@@ -8,7 +8,7 @@ class ExportConfig {
     }
 
     static get default() {
-        return new ExportConfig();
+        return new ExportConfig({});
     }
 
     static get supportedFormats() {

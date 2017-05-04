@@ -377,8 +377,60 @@ class Video {
         return this._activeFragment;
     }
 
+    upload({
+               config = ExportConfig.default, title = 'Uploaded with VideoEditor', description = 'https://github.com/RuurdBijlsma/Electron-Video-Editor', publicity = 'public', onProgress = () => {
+        }
+           }) {
+        return new Promise(resolve => {
+            let format = 'mp4';
+            let tmpFile = `${tmpDir}/toUpload.${format}`;
+            let progress = 0;
+            let tokens;
+            Youtube.getAccessToken().then(t => {
+                tokens = t;
+            });
+            this.export({
+                config: config,
+                overwrite: true,
+                outputFile: tmpFile,
+                clearTmpDir: false,
+                onProgress: p => {
+                    progress = p / 2;
+                    onProgress(progress);
+                }
+            }).then(() => {
+                let startUpload = () => {
+                    Youtube.upload({
+                        path: tmpFile,
+                        title: title,
+                        description: description,
+                        publicity: publicity,
+                        onProgress: p => {
+                            progress = 0.5 + p / 2;
+                            onProgress(progress);
+                        },
+                        tokens: tokens,
+                    }).then(e => {
+                        resolve(e);
+                        node.deleteDirectory(tmpDir);
+                    });
+                };
+                if (!tokens) {
+                    let checkUpload = self.setInterval(() => {
+                        if (tokens) {
+                            startUpload();
+                            clearInterval(checkUpload);
+                        }
+                        console.log('Waiting for user...');
+                    }, 100);
+                } else
+                    startUpload();
+            });
+        });
+    }
+
     export({
-               config = ExportConfig.default, overwrite = true, outputFile = 'output', onProgress = () => {
+               config = ExportConfig.default, overwrite = true, outputFile = 'output', clearTmpDir = true, onProgress = () => {
         }
            }) {
         return new Promise(resolve => {
@@ -399,7 +451,7 @@ class Video {
                             index = secondsProcessed.length;
                         }
                         secondsProcessed[index] = seconds;
-                        let percentage = Math.min(this.duration, secondsProcessed.reduce((a, b) => a + b) / duration);
+                        let percentage = Math.min(duration, secondsProcessed.reduce((a, b) => a + b)) / duration;
                         onProgress(percentage);
                     }
                 }).then(() => {
@@ -408,8 +460,9 @@ class Video {
                         for (let i = 0; i < this.fragments.length; i++)
                             tempFiles.push(`${i}.${config.format}`);
 
-                        FFMPEG.concatFiles(tempFiles, `${outputFile}.${config.format}`, overwrite).then(() => {
-                            node.deleteDirectory(tmpDir);
+                        FFMPEG.concatFiles(tempFiles, `${outputFile}`, overwrite).then(() => {
+                            if (clearTmpDir)
+                                node.deleteDirectory(tmpDir);
                             resolve();
                         });
                     }

@@ -7,6 +7,8 @@ exports.runFFMPEGCommand = (commandArray, done) => {
     return execFile(path, commandArray, done);
 };
 
+exports.fileSize = name => fs.statSync(name).size;
+
 exports.createFile = (name, content) => {
     return new Promise((resolve, error) => {
         fs.writeFile(name, content, err => {

@@ -4,36 +4,43 @@ const {BrowserWindow} = require("electron").remote;
 const ResumableUpload = require('node-youtube-resumable-upload');
 
 class Youtube {
-    static upload({path, title, description, status = 'public'}) {
-        Youtube.getAccessToken().then(() => {
-            Youtube.getAuthClient().then(client => {
-                console.log(client);
+    static upload({
+                      path, title, description, publicity = 'public', onProgress = () => {
+        }, tokens
+                  }) {
+        return new Promise(resolve => {
+            const fileSize = node.fileSize(path);
+            const metadata = {
+                snippet: {
+                    title: title,
+                    description: description
+                },
+                status: {privacyStatus: publicity}
+            };
+            const resumableUpload = new ResumableUpload(); //create new ResumableUpload
+            resumableUpload.tokens = tokens; //Google OAuth2 tokens
+            resumableUpload.filepath = path;
+            // resumableUpload.monitor = true;
+            resumableUpload.metadata = metadata; //include the snippet and status for the video
+            resumableUpload.retry = 3; // Maximum retries when upload failed.
 
-                const metadata = {
-                    snippet: {
-                        title: title,
-                        description: description
-                    },
-                    status: {privacyStatus: status}
-                };
-                const resumableUpload = new ResumableUpload(); //create new ResumableUpload
-                resumableUpload.tokens = tokens; //Google OAuth2 tokens
-                resumableUpload.filepath = path;
-                resumableUpload.metadata = metadata; //include the snippet and status for the video
-                resumableUpload.retry = 3; // Maximum retries when upload failed.
-                resumableUpload.upload();
-                resumeableUpload.on('progress', progress => {
-                    console.log('[PROGRESS]', progress);
-                });
-                resumableUpload.on('success', success => {
-                    console.log('[PROGRESS]', success);
-                });
-                resumableUpload.on('error', error => {
-                    console.log('[PROGRESS]', error);
-                });
+            console.log('starting upload');
+            resumableUpload.upload();
+            resumableUpload.on('progress', p => {
+                console.log('2');
+                onProgress(p / fileSize);
             });
-        }).catch(err => console.debug('Could not get tokens:', err));
+            resumableUpload.on('success', s => {
+                console.log('1');
+                resolve(JSON.parse(s));
+            });
+            resumableUpload.on('error', e => {
+                console.log('3');
+                console.log(e);
+            });
+        });
     }
+
 ///todo: refresh tokens functionlity maken als dit weer werkt
     static getAccessToken() {
         return new Promise((resolve, error) => {
@@ -43,8 +50,7 @@ class Youtube {
                         // Now tokens contains an access_token and an optional refresh_token. Save them.
                         if (!err) {
                             client.setCredentials(tokens);
-                            localStorage.authClient = JSON.stringify(client);
-                            resolve(tokens);
+                            resolve(client.credentials);
                         } else {
                             error(err);
                         }
@@ -57,27 +63,37 @@ class Youtube {
     static getAuthCode() {
         return new Promise(resolve => {
             Youtube.getAuthUrl().then(url => {
-                let win = new BrowserWindow({width: 885, height: 668})
+                let win = new BrowserWindow({
+                    width: 885,
+                    height: 668,
+                    frame: false,
+                    show: false,
+                    parent: remote.getCurrentWindow(),
+                    modal: true,
+                });
+                win.once('ready-to-show', () => win.show());
+                win.setMenu(null);
                 win.on('closed', () => {
                     win = null;
                 });
 
-                win.webContents.on('did-finish-load', e => {
+                win.webContents.on('did-finish-load', () => {
                     let title = win.webContents.getTitle();
                     if (title.includes('Success')) {
                         let code = title.split('code=')[1];
                         win.close();
                         localStorage.authCode = code;
-                        resolve('loaded', code);
+                        resolve(code);
                     }
                 });
 
                 win.loadURL(url);
+                // win.show();
             });
         });
     }
 
-    static getAuthUrl() {
+    static async getAuthUrl() {
         return new Promise(resolve => {
             Youtube.getAuthClient().then(client => {
                 const url = client.generateAuthUrl({
@@ -85,7 +101,7 @@ class Youtube {
                     access_type: 'offline',
 
                     // If you only need one scope you can pass it as a string
-                    scope: 'https://www.googleapis.com/auth/youtube.upload',
+                    scope: 'https://www.googleapis.com/auth/youtube.upload'
 
                     // Optional property that passes state parameters to redirect URI
                     // state: { foo: 'bar' }
