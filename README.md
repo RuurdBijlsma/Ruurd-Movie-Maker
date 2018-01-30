@@ -1,4 +1,4 @@
-# Video-Editor
+# Ruurd Movie Maker
 Video editor created with Electron
 
 **Features**
