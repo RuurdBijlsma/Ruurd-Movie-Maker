@@ -1,10 +1,12 @@
 {
-  "name": "Ruurd_Movie_Maker",
+  "name": "ruurd-movie-maker",
   "version": "1.0.0",
   "description": "Video editor",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/assets/favicon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/assets/favicon.ico --prune=true --out=release-builds --version-string.ProductName=\"RuurdMovieMaker\"",    
+    "package-linux": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=linux --arch=x64 --icon=src/assets/favicon.png --prune=true --out=release-builds"
   },
   "repository": "https://github.com/RuurdBijlsma/Electron-Video-Editor",
   "keywords": [
@@ -16,13 +18,14 @@
   "author": "Ruurd Bijlsma",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "~1.6.2",
-    "electron-winstaller": "^2.5.2"
+    "electron": "^1.6.2",
+    "electron-packager": "^10.1.0",
+    "devtron": "^1.4.0"
   },
   "dependencies": {
     "electron-context-menu": "^0.9.0",
     "electron-is-dev": "^0.1.2",
     "googleapis": "^19.0.0",
-    "node-youtube-resumable-upload":"^0.2.1"
+    "node-youtube-resumable-upload": "^0.2.1"
   }
 }
