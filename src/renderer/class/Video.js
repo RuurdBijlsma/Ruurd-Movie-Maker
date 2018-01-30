@@ -1,5 +1,20 @@
 class Video {
-    constructor({videoPlayer, videoContainer, thumbnailContainer, seekProgress, seekThumb, timeStamp, playButton, frameRateElement, durationElement, fragmentControls, speedElement, volumeElement, speedInput, volumeInput}) {
+    constructor({
+        videoPlayer,
+        videoContainer,
+        thumbnailContainer,
+        seekProgress,
+        seekThumb,
+        timeStamp,
+        playButton,
+        frameRateElement,
+        durationElement,
+        fragmentControls,
+        speedElement,
+        volumeElement,
+        speedInput,
+        volumeInput
+    }) {
         this.fragments = [];
         this.videoPlayer = videoPlayer;
         this.videoContainer = videoContainer;
@@ -27,14 +42,14 @@ class Video {
         this.createContextMenu();
     }
 
-    set thumbnailZoom(value){
+    set thumbnailZoom(value) {
         this._thumbnailZoom = value;
-        for(let fragment of this.fragments){
+        for (let fragment of this.fragments) {
             fragment.widthPerSecond = this.thumbnailZoom;
             fragment.updateThumbnailWidth();
         }
     }
-    get thumbnailZoom(){
+    get thumbnailZoom() {
         return this._thumbnailZoom;
     }
 
@@ -269,8 +284,7 @@ class Video {
         if (this.fragments.length === 0) {
             this.hidePlayer();
             video.activeFragment = undefined;
-        }
-        else {
+        } else {
             this.updateTime();
         }
     }
@@ -391,9 +405,12 @@ class Video {
     }
 
     upload({
-               config = ExportConfig.default, title = 'Uploaded with VideoEditor', description = 'https://github.com/RuurdBijlsma/Electron-Video-Editor', publicity = 'public', onProgress = () => {
-        }
-           }) {
+        config = ExportConfig.default,
+        title = 'Uploaded with VideoEditor',
+        description = 'https://github.com/RuurdBijlsma/Ruurd-Movie-Maker',
+        publicity = 'public',
+        onProgress = console.log
+    }) {
         return new Promise(resolve => {
             let format = 'mp4';
             let tmpFile = `${tmpDir}/toUpload.${format}`;
@@ -442,10 +459,13 @@ class Video {
         });
     }
 
-    export({
-               config = ExportConfig.default, overwrite = true, outputFile = 'output', clearTmpDir = true, onProgress = () => {
-        }
-           }) {
+    export ({
+        config = ExportConfig.default,
+        overwrite = true,
+        outputFile = 'output',
+        clearTmpDir = true,
+        onProgress = () => {}
+    }) {
         return new Promise(resolve => {
             let i = 0;
             let secondsProcessed = [];

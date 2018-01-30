@@ -333,8 +333,13 @@ input.zoom-input {
     width: 30% !important;
 }
 
+#yt-title {
+    margin-top: 20px;
+}
+
 input[type=text],
-input[type=number] {
+input[type=number],
+textarea {
     cursor: text;
 }
 

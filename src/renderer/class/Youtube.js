@@ -117,7 +117,7 @@ class Youtube {
             if (Youtube._oAuth2Client) {
                 resolve(Youtube._oAuth2Client);
             } else {
-                Youtube.readTextFile("./../../resources/secret.json").then(txt => {
+                Youtube.readTextFile("./../../resources/client_id.json").then(txt => {
                     let {client_id, client_secret, redirect_uris} = JSON.parse(txt).installed;
 
                     Youtube._oAuth2Client = new OAuth2(

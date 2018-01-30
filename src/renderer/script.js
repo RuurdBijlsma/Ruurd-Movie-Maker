@@ -85,14 +85,14 @@ function initialize() {
     leftHalf = document.getElementsByClassName("left-half")[0];
     rightHalf = document.getElementsByClassName("right-half")[0];
 
-    $('#exportModal').modal();
+    $('#youtubeModal').modal();
     $('select').material_select();
 
     if (localStorage.divider !== undefined)
         changeDivider(localStorage.divider);
 }
 
-function setZoom(e){
+function setZoom(e) {
     let zoom = e.target.value;
     console.log(zoom);
     video.thumbnailZoom = zoom;
@@ -215,8 +215,7 @@ function addVideo(e) {
     e.target.value = "";
 }
 
-function exportVideo() {
-    let window = remote.getCurrentWindow();
+function checkExport(window) {
     if (video.fragments.length <= 0) {
         dialog.showMessageBox(window, {
             type: 'warning',
@@ -225,8 +224,36 @@ function exportVideo() {
             message: 'There are no videos to export',
             detail: 'Add videos before exporting'
         });
-        return;
+        return false;
     }
+    return true;
+}
+
+function uploadVideo() {
+    let window = remote.getCurrentWindow();
+    if (!checkExport(window))
+        return;
+
+    disableMouse();
+    video.upload({
+        title: document.getElementById('yt-title').value,
+        description: document.getElementById('yt-desc').value,
+        publicity: document.getElementById('privacy-selector').value,
+        onProgress: p => {
+            console.log(p);
+            window.setProgressBar(p);
+        }
+    }).then(d => {
+        window.setProgressBar(0);
+        console.log('Done!', d);
+        enableMouse();
+    });
+}
+
+function exportVideo() {
+    let window = remote.getCurrentWindow();
+    if (!checkExport(window))
+        return;
 
     let format = 'mp4',
         fps = 60,

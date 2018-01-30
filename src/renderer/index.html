@@ -57,10 +57,10 @@
             <i class="material-icons">arrow_upward</i>
             <p>Export</p>
         </a>
-        <label title="Export to YouTube" class="waves-effect waves-light menu-button right-aligned">
+        <a title="Export to YouTube" href="#youtubeModal" class="waves-effect waves-light menu-button right-aligned">
             <i class="material-icons">video_library</i>
             <p>YouTube</p>
-        </label>
+        </a>
     </div>
     <div class="bottom-half">
         <div class="left-half">
@@ -101,7 +101,34 @@
         </div>
     </div>
     </div>
+    <div id="youtubeModal" class="modal">
+        <div class="modal-content">
+            <h4>Upload Video</h4>
 
+            <div class="input-field col s6">
+                <input placeholder="Title" id="yt-title" type="text" class="validate">
+                <label for="yt-title">Enter your title...</label>
+            </div>
+
+            <div class="input-field col s12">
+                <textarea id="yt-desc" class="materialize-textarea"></textarea>
+                <label for="yt-desc">Desciption</label>
+            </div>
+
+            <div class="input-field col s12">
+                <select id="privacy-selector">
+                    <option selected value="public">Public</option>
+                    <option value="unlisted">Unlisted</option>
+                    <option value="private">Private</option>
+                </select>
+                <label>Choose privacy status</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" onclick="uploadVideo()">Upload</a>
+        </div>
+
+    </div>
 </body>
 
 </html>
