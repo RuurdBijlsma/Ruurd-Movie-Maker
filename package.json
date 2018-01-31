@@ -1,6 +1,6 @@
 {
   "name": "ruurd-movie-maker",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Video editor",
   "main": "main.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "Movie",
     "Maker"
   ],
-  "author": "Ruurd Bijlsma",
+  "author": "Ruurd Bijlsma <ruurdbijlsma@gmail.com>",
   "license": "CC0-1.0",
   "devDependencies": {
     "devtron": "^1.4.0",
