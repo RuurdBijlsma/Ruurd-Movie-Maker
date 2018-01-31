@@ -4,9 +4,7 @@
   "description": "Video editor",
   "main": "main.js",
   "scripts": {
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/renderer/img/icon.icns --prune=true --out=release-builds",
-    "package-win": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/renderer/img/icon.ico --prune=true --out=release-builds --version-string.ProductName=\"RuurdMovieMaker\"",
-    "package-linux": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=linux --arch=x64 --icon=src/renderer/img/icon.png --prune=true --out=release-builds"
+    "dist": "build"
   },
   "repository": "https://github.com/RuurdBijlsma/Electron-Video-Editor",
   "keywords": [
@@ -18,14 +16,40 @@
   "author": "Ruurd Bijlsma",
   "license": "CC0-1.0",
   "devDependencies": {
+    "devtron": "^1.4.0",
     "electron": "^1.6.2",
-    "electron-packager": "^10.1.0",
-    "devtron": "^1.4.0"
+    "electron-builder": "^19.55.3"
   },
   "dependencies": {
     "electron-context-menu": "^0.9.0",
     "electron-is-dev": "^0.1.2",
     "googleapis": "^19.0.0",
     "node-youtube-resumable-upload": "^0.2.1"
+  },
+  "build": {
+    "appId": "ruurdmoviemaker",
+    "dmg": {
+      "contents": [{
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS ",
+      "icon": "src/renderer/img/icon.ico"
+    }
   }
 }
