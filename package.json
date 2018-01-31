@@ -4,9 +4,9 @@
   "description": "Video editor",
   "main": "main.js",
   "scripts": {
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/assets/favicon.icns --prune=true --out=release-builds",
-    "package-win": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/assets/favicon.ico --prune=true --out=release-builds --version-string.ProductName=\"RuurdMovieMaker\"",    
-    "package-linux": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=linux --arch=x64 --icon=src/assets/favicon.png --prune=true --out=release-builds"
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/renderer/img/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=win32 --arch=x64 --icon=src/renderer/img/icon.ico --prune=true --out=release-builds --version-string.ProductName=\"RuurdMovieMaker\"",
+    "package-linux": "electron-packager . ruurdmoviemaker --overwrite --asar=true --platform=linux --arch=x64 --icon=src/renderer/img/icon.png --prune=true --out=release-builds"
   },
   "repository": "https://github.com/RuurdBijlsma/Electron-Video-Editor",
   "keywords": [
