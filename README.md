@@ -3,7 +3,7 @@ Video editor created with Electron
 
 **How to use**
 
-Put ffmpeg.exe in resources folder after isntalling exe from releases. To upload to youtube put cliend_id.json in the resources folder. [Here's a page about client_id.json](https://developers.google.com/youtube/registering_an_application)
+Put [ffmpeg.exe](https://www.ffmpeg.org/download.html) in resources folder after isntalling exe from releases. To upload to youtube put cliend_id.json in the resources folder. [Here's a page about client_id.json](https://developers.google.com/youtube/registering_an_application)
 
 **Features**
 * Cut video
