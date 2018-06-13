@@ -1,6 +1,6 @@
 {
   "name": "ruurd-movie-maker",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Video editor",
   "main": "main.js",
   "scripts": {
