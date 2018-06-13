@@ -4,7 +4,7 @@ class MoveFragment extends Command {
         this.video = video;
         this.fragment = fragment;
         this.newIndex = Math.min(video.fragments.length - 1, Math.max(0, newIndex));
-        this.oldIndex = 0;
+        this.oldIndex = video.fragments.indexOf(fragment);
     }
 
     execute() {
