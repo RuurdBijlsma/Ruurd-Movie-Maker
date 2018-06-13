@@ -2,3 +2,4 @@ node_modules
 client_id.json
 .tmp
 dist
+.idea
