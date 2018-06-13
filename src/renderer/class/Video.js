@@ -1,20 +1,20 @@
 class Video {
     constructor({
-        videoPlayer,
-        videoContainer,
-        thumbnailContainer,
-        seekProgress,
-        seekThumb,
-        timeStamp,
-        playButton,
-        frameRateElement,
-        durationElement,
-        fragmentControls,
-        speedElement,
-        volumeElement,
-        speedInput,
-        volumeInput
-    }) {
+                    videoPlayer,
+                    videoContainer,
+                    thumbnailContainer,
+                    seekProgress,
+                    seekThumb,
+                    timeStamp,
+                    playButton,
+                    frameRateElement,
+                    durationElement,
+                    fragmentControls,
+                    speedElement,
+                    volumeElement,
+                    speedInput,
+                    volumeInput
+                }) {
         this.fragments = [];
         this.videoPlayer = videoPlayer;
         this.videoContainer = videoContainer;
@@ -49,6 +49,7 @@ class Video {
             fragment.updateThumbnailWidth();
         }
     }
+
     get thumbnailZoom() {
         return this._thumbnailZoom;
     }
@@ -198,7 +199,7 @@ class Video {
         });
     }
 
-    addFragment(fragment, index) {
+    addFragment(fragment, index = false) {
         fragment.thumbnailSeeker.addEventListener('mousedown', e => {
             if (e.button === 2) {
                 this.shouldShowContextMenu = true;
@@ -232,7 +233,7 @@ class Video {
 
         fragment.addEventListener('timeChange', () => this.updateTime());
 
-        if (index) {
+        if (index !== false) {
             this.moveFragment(fragment, index);
         } else {
             this.videoContainer.appendChild(fragment.element);
@@ -303,10 +304,12 @@ class Video {
         Video.insertNodeAt(this.thumbnailContainer, fragment.thumbnailElement, index);
         Video.insertNodeAt(this.videoContainer, fragment.element, index);
         this.fragments.splice(index, 0, fragment);
-        this.updateTime();
+        // this.updateTime();
     }
 
     split(fragment, timePercent = 0.5) {
+        console.log(this.currentTime);
+        let time = this.currentTime;
         let index = this.fragments.indexOf(fragment);
 
         let newFragment = new VideoFragment(fragment.file, this.thumbnailZoom);
@@ -314,10 +317,17 @@ class Video {
         newFragment.endPoint = fragment.endPoint;
         newFragment.volume = fragment.volume;
 
-        this.addFragment(newFragment, index);
+        console.log('new splitted fragment index: ', index);
+        this.addFragment(newFragment, index + 1);
 
         newFragment.startPoint = timePercent;
         fragment.endPoint = timePercent;
+
+        // this.activeFragment = newFragment;
+        newFragment.addEventListener("loadedData", ()=>{
+            this.currentTime = time;
+            this.updateTime();
+        });
 
         return newFragment;
     }
@@ -405,12 +415,12 @@ class Video {
     }
 
     upload({
-        config = ExportConfig.default,
-        title = 'Uploaded with VideoEditor',
-        description = 'https://github.com/RuurdBijlsma/Ruurd-Movie-Maker',
-        publicity = 'public',
-        onProgress = console.log
-    }) {
+               config = ExportConfig.default,
+               title = 'Uploaded with VideoEditor',
+               description = 'https://github.com/RuurdBijlsma/Ruurd-Movie-Maker',
+               publicity = 'public',
+               onProgress = console.log
+           }) {
         return new Promise(resolve => {
             let format = 'mp4';
             let tmpFile = `${tmpDir}/toUpload.${format}`;
@@ -459,13 +469,14 @@ class Video {
         });
     }
 
-    export ({
-        config = ExportConfig.default,
-        overwrite = true,
-        outputFile = 'output',
-        clearTmpDir = true,
-        onProgress = () => {}
-    }) {
+    export({
+               config = ExportConfig.default,
+               overwrite = true,
+               outputFile = 'output',
+               clearTmpDir = true,
+               onProgress = () => {
+               }
+           }) {
         return new Promise(resolve => {
             let i = 0;
             let secondsProcessed = [];

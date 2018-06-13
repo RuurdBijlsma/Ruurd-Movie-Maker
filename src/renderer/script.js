@@ -42,6 +42,7 @@ function initialize() {
         dividerChanging = false;
     });
     document.addEventListener('keydown', e => {
+        console.log(e.key);
         switch (e.key) {
             case "Escape":
                 exitFullscreen();
@@ -52,10 +53,10 @@ function initialize() {
             case " ":
                 playPause();
                 break;
-            case "ArrowRight":
+            case ".":
                 nextFrame();
                 break;
-            case "ArrowLeft":
+            case ",":
                 previousFrame();
                 break;
             case "Delete":
@@ -75,6 +76,12 @@ function initialize() {
             case "F5":
                 location.reload();
                 break;
+            case "ArrowRight":
+                moveFragment(1);
+                break;
+            case "ArrowLeft":
+                moveFragment(-1);
+                break;
         }
     });
 
@@ -90,6 +97,13 @@ function initialize() {
 
     if (localStorage.divider !== undefined)
         changeDivider(localStorage.divider);
+}
+
+function moveFragment(direction) {
+    let activeFragment = video.activeFragment;
+    let newIndex = video.fragments.indexOf(video.activeFragment) + direction;
+    new MoveFragment(video, video.activeFragment, newIndex).execute();
+    video.activeFragment = activeFragment;
 }
 
 function setZoom(e) {

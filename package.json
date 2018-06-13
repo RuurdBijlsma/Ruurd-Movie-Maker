@@ -29,7 +29,8 @@
   "build": {
     "appId": "ruurdmoviemaker",
     "dmg": {
-      "contents": [{
+      "contents": [
+        {
           "x": 110,
           "y": 150
         },
