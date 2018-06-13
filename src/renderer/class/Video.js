@@ -217,6 +217,9 @@ class Video {
                     this.activeFragment = fragment;
                     this.pause();
                     this.updateTime();
+                    fragment.addEventListener('loadedData',()=>{
+                        this.updateTime();
+                    });
                     fragment.pause();
                 }
             }
@@ -324,7 +327,7 @@ class Video {
         fragment.endPoint = timePercent;
 
         // this.activeFragment = newFragment;
-        newFragment.addEventListener("loadedData", ()=>{
+        newFragment.addEventListener("loadedData", () => {
             this.currentTime = time;
             this.updateTime();
         });

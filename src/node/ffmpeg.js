@@ -4,8 +4,7 @@ const isDev = require('electron-is-dev');
 
 exports.runFFMPEGCommand = (commandArray, done) => {
     let isWin = /^win/.test(process.platform);
-    let path = isWin ? "resources/ffmpeg.exe" :
-        "ffmpeg";
+    let path = isWin ? "resources/ffmpeg.exe" : "ffmpeg";
     console.log(path);
     return execFile(path, commandArray, done);
 };
