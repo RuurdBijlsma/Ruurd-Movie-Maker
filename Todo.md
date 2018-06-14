@@ -1,11 +1,11 @@
 #Todo
-* Command to reaarange fragments
 * UI to rearrange fragments
 * Import video via "Open with"
-* Export to youtube als er tijd over is
 * Width, height en bitrate aan exportconfig en ffmpeg toevoegen
 * time passed ding beter maken als playbackspeed veranderd is
 #Done
+* Export to youtube als er tijd over is
+* Command to reaarange fragments
 * Command pattern voor undo en redo
 * als fragment geswitcht wordt de slider bovenin updaten om correcte value te laten zien
 * In ffmpeg export ook audio speed up doen met atempo
