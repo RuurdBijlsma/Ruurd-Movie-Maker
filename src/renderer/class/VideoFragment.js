@@ -1,10 +1,10 @@
 class VideoFragment {
-    constructor(file, widthPerSecond = 3) {
+    constructor(path, widthPerSecond = 3) {
         this.eventListeners = {};
-        this.file = file;
+        this.path = path;
 
         this.element = document.createElement("video");
-        this.element.src = file.path;
+        this.element.src = path;
         this.element.load();
         // this._playbackSpeed = 1;
 
@@ -227,7 +227,7 @@ class VideoFragment {
     }
 
     updateFps() {
-        FFMPEG.runCommand(['-i', this.file.path]).then(info => {
+        FFMPEG.runCommand(['-i', this.path]).then(info => {
             let words = info.stderr.split('\n').find(line => line.includes(' fps')).split(' fps')[0].split(' ');
             this._fps = Number(words[words.length - 1]);
             this.executeEvent("loadedFps");
@@ -273,7 +273,7 @@ class VideoFragment {
     }) {
         let f = new FFMPEG();
 
-        f.input = this.file.path;
+        f.input = this.path;
         f.output = outputFile;
         f.startTime = this.exportStartTime;
         console.log("Exporting", this.exportStartTime);

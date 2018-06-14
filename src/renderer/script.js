@@ -5,6 +5,7 @@ const {
     dialog
 } = require('electron').remote;
 const node = remote.require('./src/node/ffmpeg.js');
+const mainProcess = remote.require('./src/node/main.js');
 const tmpDir = '.tmp';
 
 document.addEventListener("DOMContentLoaded", initialize);
@@ -97,6 +98,14 @@ function initialize() {
 
     if (localStorage.divider !== undefined)
         changeDivider(localStorage.divider);
+
+    let arguments = mainProcess.arguments();
+    if (arguments.length > 0)
+        for (let path of arguments) {
+            console.log(path);
+            video.addFragmentByPath(path);
+        }
+
 }
 
 function moveFragment(direction) {
@@ -282,9 +291,9 @@ function exportVideo() {
         buttonLabel: "Export",
         defaultPath: getFileName(format),
         filters: [{
-                name: `Video/${format}`,
-                extensions: [`${format}`]
-            },
+            name: `Video/${format}`,
+            extensions: [`${format}`]
+        },
             {
                 name: `All files/*`,
                 extensions: ['*']

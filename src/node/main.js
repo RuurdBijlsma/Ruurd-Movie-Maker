@@ -9,6 +9,10 @@ const url = require('url');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+exports.arguments = ()=>{
+    return process.argv.filter(a=>!a.includes(".exe") && !a.includes(".js"));
+}
+
 function createWindow() {
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({

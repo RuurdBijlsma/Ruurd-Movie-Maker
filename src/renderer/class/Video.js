@@ -166,9 +166,23 @@ class Video {
         this.toLoad = files.length;
 
         for (let file of files) {
-            let fragment = new VideoFragment(file, this.thumbnailZoom);
-            new AddFragment(this, fragment).execute();
+            this.addFragmentByPath(file.path);
         }
+    }
+
+    isValidPath(path) {
+        let allowed = ['mp4', 'avi', 'webm', 'flv'];
+        for (let format of allowed)
+            if (path.toLowerCase().includes(format))
+                return true;
+        return false;
+    }
+
+    addFragmentByPath(path) {
+        if (!this.isValidPath(path))
+            return console.error("Path is not a valid video file");
+        let fragment = new VideoFragment(path, this.thumbnailZoom);
+        new AddFragment(this, fragment).execute();
     }
 
     createContextMenu() {
@@ -217,7 +231,7 @@ class Video {
                     this.activeFragment = fragment;
                     this.pause();
                     this.updateTime();
-                    fragment.addEventListener('loadedData',()=>{
+                    fragment.addEventListener('loadedData', () => {
                         this.updateTime();
                     });
                     fragment.pause();
