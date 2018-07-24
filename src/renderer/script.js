@@ -323,7 +323,7 @@ function exportVideo() {
 
 function getFileName(format = 'mp4') {
     format = '.' + format;
-    let commonName = sharedStart(video.fragments.map(f => f.file.name)).trim();
+    let commonName = sharedStart(video.fragments.map(f => f.path)).trim();
 
     console.log('initialname:', commonName);
 
