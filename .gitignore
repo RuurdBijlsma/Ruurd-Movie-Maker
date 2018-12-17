@@ -1,5 +1,5 @@
 node_modules
-client_id.json
+youtubeSecret.json
 .tmp
 dist
 .idea

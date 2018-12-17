@@ -1,6 +1,6 @@
 {
   "name": "ruurd-movie-maker",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Video editor",
   "main": "main.js",
   "scripts": {
@@ -17,13 +17,14 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "devtron": "^1.4.0",
-    "electron": "^2.0.2",
-    "electron-builder": "^19.55.3"
+    "electron": "^3.0.12",
+    "electron-builder": "^20.38.3"
   },
   "dependencies": {
-    "electron-context-menu": "^0.9.0",
-    "electron-is-dev": "^0.1.2",
-    "googleapis": "^19.0.0",
+    "ffmpeg-binaries": "^4.0.0",
+    "electron-context-menu": "^0.10.1",
+    "electron-is-dev": "^1.0.1",
+    "googleapis": "^36.0.0",
     "node-youtube-resumable-upload": "^0.2.1"
   },
   "build": {

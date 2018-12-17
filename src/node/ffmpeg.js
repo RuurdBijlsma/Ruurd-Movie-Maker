@@ -1,12 +1,11 @@
 const execFile = require("child_process").execFile;
 const fs = require('fs');
 const isDev = require('electron-is-dev');
+const ffmpegPath = require('ffmpeg-binaries');
 
 exports.runFFMPEGCommand = (commandArray, done) => {
     let isWin = /^win/.test(process.platform);
-    let path = isWin ? "resources/ffmpeg.exe" : "ffmpeg";
-    console.log(path);
-    return execFile(path, commandArray, done);
+    return execFile(ffmpegPath, commandArray, done);
 };
 
 exports.fileSize = name => fs.statSync(name).size;

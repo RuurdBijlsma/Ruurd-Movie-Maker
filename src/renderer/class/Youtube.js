@@ -1,13 +1,14 @@
 const google = require('googleapis');
 const OAuth2 = google.auth.OAuth2;
-const {BrowserWindow} = require("electron").remote;
+const { BrowserWindow } = require("electron").remote;
 const ResumableUpload = require('node-youtube-resumable-upload');
+const secret = require('../../resources/youtubeSecret.json');
 
 class Youtube {
     static upload({
-                      path, title, description, publicity = 'public', onProgress = () => {
+        path, title, description, publicity = 'public', onProgress = () => {
         }, tokens
-                  }) {
+    }) {
         return new Promise(resolve => {
             const fileSize = node.fileSize(path);
             const metadata = {
@@ -15,7 +16,7 @@ class Youtube {
                     title: title,
                     description: description
                 },
-                status: {privacyStatus: publicity}
+                status: { privacyStatus: publicity }
             };
             const resumableUpload = new ResumableUpload(); //create new ResumableUpload
             resumableUpload.tokens = tokens; //Google OAuth2 tokens
@@ -41,7 +42,7 @@ class Youtube {
         });
     }
 
-///todo: refresh tokens functionlity maken als dit weer werkt
+    ///todo: refresh tokens functionlity maken als dit weer werkt
     static getAccessToken() {
         return new Promise((resolve, error) => {
             Youtube.getAuthCode().then(code => {
@@ -117,16 +118,14 @@ class Youtube {
             if (Youtube._oAuth2Client) {
                 resolve(Youtube._oAuth2Client);
             } else {
-                Youtube.readTextFile("./../../resources/client_id.json").then(txt => {
-                    let {client_id, client_secret, redirect_uris} = JSON.parse(txt).installed;
+                let { client_id, client_secret, redirect_uris } = secret.installed;
 
-                    Youtube._oAuth2Client = new OAuth2(
-                        client_id,
-                        client_secret,
-                        redirect_uris[0]
-                    );
-                    resolve(Youtube._oAuth2Client);
-                });
+                Youtube._oAuth2Client = new OAuth2(
+                    client_id,
+                    client_secret,
+                    redirect_uris[0]
+                );
+                resolve(Youtube._oAuth2Client);
             }
         });
     }
