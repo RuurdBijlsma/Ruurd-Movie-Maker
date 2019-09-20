@@ -4,7 +4,7 @@
   "description": "Video editor",
   "main": "main.js",
   "scripts": {
-    "dist": "build"
+    "dist": "electron-builder"
   },
   "repository": "https://github.com/RuurdBijlsma/ruurd-movie-maker",
   "keywords": [
