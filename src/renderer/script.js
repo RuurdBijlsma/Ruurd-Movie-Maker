@@ -108,6 +108,10 @@ function initialize() {
 
 }
 
+function setGlobalVolume(e) {
+    console.log(e);
+}
+
 function moveFragment(direction) {
     let activeFragment = video.activeFragment;
     let newIndex = video.fragments.indexOf(video.activeFragment) + direction;

@@ -16,6 +16,9 @@ exports.arguments = ()=>{
 function createWindow() {
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        },
         show: false,
         icon: path.join(__dirname, '../renderer/img/icon.png'),
         width: width + 20,

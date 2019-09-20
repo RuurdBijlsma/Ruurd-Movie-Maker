@@ -6,7 +6,7 @@
   "scripts": {
     "dist": "build"
   },
-  "repository": "https://github.com/RuurdBijlsma/Electron-Video-Editor",
+  "repository": "https://github.com/RuurdBijlsma/ruurd-movie-maker",
   "keywords": [
     "Video",
     "Editor",
@@ -16,16 +16,16 @@
   "author": "Ruurd Bijlsma <ruurdbijlsma@gmail.com>",
   "license": "CC0-1.0",
   "devDependencies": {
-    "devtron": "^1.4.0",
-    "electron": "^3.0.12",
-    "electron-builder": "^20.38.3"
+    "devtron": "latest",
+    "electron": "latest",
+    "electron-builder": "latest"
   },
   "dependencies": {
-    "ffmpeg-binaries": "^4.0.0",
-    "electron-context-menu": "^0.10.1",
-    "electron-is-dev": "^1.0.1",
-    "googleapis": "^36.0.0",
-    "node-youtube-resumable-upload": "^0.2.1"
+    "electron-context-menu": "latest",
+    "electron-is-dev": "latest",
+    "ffmpeg-binaries": "latest",
+    "googleapis": "latest",
+    "node-youtube-resumable-upload": "latest"
   },
   "build": {
     "extraFiles": [

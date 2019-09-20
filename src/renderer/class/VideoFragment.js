@@ -200,7 +200,7 @@ class VideoFragment {
 
     get exportStartTime() {
         if (this.metadataLoaded) {
-            return this.startPoint * (this.element.duration /* / this.playbackSpeed*/ );
+            return this.startPoint * (this.element.duration /* / this.playbackSpeed*/);
         }
         console.warn("Video metadata hasn't loaded yet");
         return 0;
@@ -245,32 +245,37 @@ class VideoFragment {
         return new Promise(resolve => {
             let canvas = document.createElement('canvas');
             let context = canvas.getContext('2d');
+            // document.body.appendChild(canvas);
+            // console.log(canvas, this.element);
 
             if (!isNaN(this.element.duration))
                 this.element.currentTime = timePercentage * this.element.duration;
 
             this.element.oncanplaythrough = () => {
+                setTimeout(() => {
+                    context.width = height / this.element.videoHeight * this.element.videoWidth;
+                    context.height = height;
+                    canvas.setAttribute("width", context.width);
+                    canvas.setAttribute("height", context.height);
 
-                context.width = height / this.element.videoHeight * this.element.videoWidth;
-                context.height = height;
-                canvas.setAttribute("width", context.width);
-                canvas.setAttribute("height", context.height);
+                    context.drawImage(this.element, 0, 0, context.width, context.height);
 
-                context.drawImage(this.element, 0, 0, context.width, context.height);
-
-                if (context.getImageData(10, 10, 1, 1).data[3] !== 0) {
-                    this._thumbnail = canvas.toDataURL();
-                    resolve(this._thumbnail);
-                }
+                    if (context.getImageData(10, 10, 1, 1).data[3] !== 0) {
+                        this._thumbnail = canvas.toDataURL();
+                        resolve(this._thumbnail);
+                    } else {
+                        console.warn("Could not get thumbnail")
+                    }
+                }, 100);
             };
         });
     }
 
-    export ({
-        outputFile = 'output.mp4',
-        fps = null,
-        process = s => console.log(s),
-    }) {
+    export({
+               outputFile = 'output.mp4',
+               fps = null,
+               process = s => console.log(s),
+           }) {
         let f = new FFMPEG();
 
         f.input = this.path;

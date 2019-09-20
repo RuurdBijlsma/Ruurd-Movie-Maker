@@ -61,7 +61,7 @@ class Video {
 
     previousFrame() {
         this.pause();
-        this.currentTime += 1 / this.activeFragment.fps;
+        this.currentTime -= 1 / this.activeFragment.fps;
     }
 
     playLoop() {
