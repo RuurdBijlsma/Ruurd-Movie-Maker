@@ -1,4 +1,7 @@
 # Ruurd Movie Maker
+
+Version 2 now available at https://github.com/RuurdBijlsma/MovieMaker
+
 Video editor created with Electron
 
 **How to use**
